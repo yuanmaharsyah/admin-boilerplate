@@ -1,0 +1,86 @@
+import { useState } from 'react';
+import { formatNumber, parseNumber } from '../../lib/format';
+import { Input } from '../ui/input';
+import { controlProps, FormField } from './FormField';
+import type { FieldProps } from './FormField';
+
+type Props = FieldProps<number | null> & {
+    /** `Rp` in front, whole rupiah only. */
+    currency?: boolean;
+    maximumFractionDigits?: number;
+    /** Thousands marks (`1.250`); off for a year or a code. */
+    grouping?: boolean;
+};
+
+/**
+ * Locale-aware number entry (frontend-behavior §6): shows `1.250.000,5`,
+ * keeps a plain number, and takes pasted text in either notation. The text
+ * is reformatted when the field loses focus. A lone `.` is a decimal mark
+ * in a decimal field and a thousands mark in a currency field (`parseNumber`).
+ */
+export function NumberField({
+    name,
+    label,
+    value,
+    onChange,
+    error,
+    required,
+    help,
+    disabled,
+    currency = false,
+    maximumFractionDigits = 2,
+    grouping = true,
+}: Props) {
+    const digits = currency ? 0 : maximumFractionDigits;
+    const show = (number: number | null) =>
+        number === null ? '' : formatNumber(number, digits, grouping);
+    const [text, setText] = useState(() => show(value));
+    const read = (input: string) => {
+        const parsed = parseNumber(input, digits > 0);
+
+        return parsed === null ? null : Number(parsed.toFixed(digits));
+    };
+
+    return (
+        <FormField
+            name={name}
+            label={label}
+            required={required}
+            help={help}
+            error={error}
+        >
+            <div className="relative">
+                {currency && (
+                    <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-body text-muted-foreground"
+                    >
+                        Rp
+                    </span>
+                )}
+                <Input
+                    {...controlProps({ name, error, required, disabled })}
+                    inputMode={digits > 0 ? 'decimal' : 'numeric'}
+                    autoComplete="off"
+                    value={text}
+                    className={
+                        currency
+                            ? 'pl-10 text-right tabular-nums'
+                            : 'text-right tabular-nums'
+                    }
+                    onChange={(event) => {
+                        setText(event.target.value);
+                        onChange(read(event.target.value));
+                    }}
+                    // Show how the input was read, in id-ID: `0.125` → `0,125`, `1,250,000` → `1.250.000`.
+                    onBlur={() => setText(show(read(text)))}
+                />
+            </div>
+        </FormField>
+    );
+}
+
+/** Rupiah: `NumberField` with the `Rp` prefix and no decimals. */
+export function CurrencyField(props: FieldProps<number | null>) {
+    return <NumberField {...props} currency />;
+}

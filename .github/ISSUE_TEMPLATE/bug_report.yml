@@ -1,0 +1,30 @@
+name: Bug report
+description: Something in the package or the skeleton doesn't work as documented.
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `composer show yuanmaharsyah/admin-core | head -4` in your project.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The smallest steps from a fresh `composer create-project yuanmaharsyah/admin-skeleton` that show the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected and what happened
+      description: Include the exact error message and the log lines from `storage/logs/laravel.log`, without passwords or personal data.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: PHP, MySQL / MariaDB, Node and OS versions.

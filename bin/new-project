@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+# bin/new-project <target> --db=<database> [--ref=vX.Y.Z] [--name="App name"] [--repo=<vcs url>] [--dry-run]
+#
+# For this repo's owner and private forks; the public way to start a project
+# is `composer create-project yuanmaharsyah/admin-skeleton my-app`.
+# Starts a client project: copies skeleton/ at a release tag of this repo
+# (default: the newest v* tag), requires yuanmaharsyah/admin-core of the same version
+# from the private VCS repository over SSH, removes the demo modules, runs
+# composer setup (app database <database>, test database <database>_test),
+# installs the AI guidelines and skills (Laravel Boost) and commits the result
+# in a new git repo. --dry-run checks the arguments
+# and prints the steps without writing anything.
+set -euo pipefail
+
+started=$SECONDS
+source_repo=$(cd "$(dirname "$0")/.." && pwd)
+
+fail() {
+    echo "new-project: $*" >&2
+    exit 1
+}
+
+target=''
+db=''
+ref=''
+name=''
+repo=git@github.com:yuanmaharsyah/yuan-admin-core.git
+dry_run=0
+for arg in "$@"; do
+    case $arg in
+        --db=*) db=${arg#--db=} ;;
+        --ref=*) ref=${arg#--ref=} ;;
+        --name=*) name=${arg#--name=} ;;
+        --repo=*) repo=${arg#--repo=} ;;
+        --dry-run) dry_run=1 ;;
+        -*) fail "unknown option $arg" ;;
+        *) target=$arg ;;
+    esac
+done
+
+step() {
+    echo "==> $*"
+}
+
+run() {
+    if ((dry_run)); then
+        echo "would run: $*"
+    else
+        "$@"
+    fi
+}
+
+[[ -n $target ]] || fail "usage: bin/new-project <target> --db=<database> [--ref=vX.Y.Z] [--name=...] [--repo=...] [--dry-run]"
+[[ ! -e $target || -z $(ls -A "$target") ]] || fail "$target exists and is not empty"
+[[ $db =~ ^[a-z][a-z0-9_]*$ ]] || fail "--db=<database> is required: lowercase letters, digits and _ (got '${db}')"
+
+ref=${ref:-$(git -C "$source_repo" tag --list 'v*' --sort=-v:refname | head -n 1)}
+[[ -n $ref ]] || fail "no v* release tag in $source_repo: run composer release first, or pass --ref"
+[[ $ref =~ ^v([0-9]+)\.([0-9]+)\.[0-9]+(-rc\.[0-9]+)?$ ]] || fail "--ref must be a release tag vX.Y.Z[-rc.N] (got '${ref}')"
+git -C "$source_repo" rev-parse -q --verify "refs/tags/$ref" >/dev/null || fail "tag $ref not found in $source_repo"
+# A release candidate is pinned exactly; a release follows its minor line.
+if [[ -n ${BASH_REMATCH[3]} ]]; then
+    constraint=${ref#v}
+else
+    constraint="^${BASH_REMATCH[1]}.${BASH_REMATCH[2]}"
+fi
+name=${name:-$(basename "$target")}
+
+step "Copy skeleton/ at $ref to $target"
+run mkdir -p "$target"
+if ((dry_run)); then
+    echo "would run: git archive $ref skeleton | tar -x -C $target --strip-components=1"
+else
+    git -C "$source_repo" archive "$ref" skeleton | tar -x -C "$target" --strip-components=1
+    cd "$target"
+fi
+
+# Database connection: DB_HOST / DB_PORT / DB_USERNAME / DB_PASSWORD from the
+# environment, else from this repo's skeleton/.env (the same dev machine).
+for key in DB_HOST DB_PORT DB_USERNAME DB_PASSWORD; do
+    if [[ -z ${!key+set} && -f $source_repo/skeleton/.env ]]; then
+        printf -v "$key" '%s' "$(sed -n "s/^$key=//p" "$source_repo/skeleton/.env" | head -n 1)"
+    fi
+done
+
+step "Write .env (APP_NAME=$name, DB_DATABASE=$db, DB_USERNAME=${DB_USERNAME:-from .env.example}) and phpunit.xml (DB_DATABASE=${db}_test)"
+run cp .env.example .env
+for key in DB_HOST DB_PORT DB_USERNAME DB_PASSWORD; do
+    [[ -n ${!key+set} ]] || continue
+    # perl takes the value from the environment, so any character in a password survives.
+    if ((dry_run)); then
+        echo "would set: $key in .env"
+    else
+        KEY=$key VALUE=${!key} perl -pi -e 's/^\Q$ENV{KEY}\E=.*/$ENV{KEY}=$ENV{VALUE}/' .env
+    fi
+done
+run sed -i.bak -e "s|^APP_NAME=.*|APP_NAME=\"$name\"|" -e "s|^DB_DATABASE=.*|DB_DATABASE=$db|" .env
+run sed -i.bak -e "s|name=\"DB_DATABASE\" value=\"[^\"]*\"|name=\"DB_DATABASE\" value=\"${db}_test\"|" phpunit.xml
+run rm .env.bak phpunit.xml.bak
+
+step "Require yuanmaharsyah/admin-core:$constraint from $repo"
+run composer config --unset repositories.admin-core
+# no-api: plain git over SSH, so a developer key or a server's deploy key is enough.
+run composer config repositories.admin-core "{\"type\": \"vcs\", \"url\": \"$repo\", \"no-api\": true}"
+run composer require "yuanmaharsyah/admin-core:$constraint" --with-all-dependencies --no-interaction
+
+step "Remove the demo modules"
+run php artisan admin:remove-demo --force
+
+step "composer setup (databases $db and ${db}_test, seed, build)"
+run composer setup
+
+step "Laravel Boost: guidelines in CLAUDE.md, skills in .claude/skills, MCP in .mcp.json"
+if ((dry_run)); then
+    echo "would write: boost.json (Claude Code, yuanmaharsyah/admin-core) and an empty CLAUDE.md"
+else
+    # Boost writes into CLAUDE.md only when it exists (else AGENTS.md, which Claude Code doesn't read).
+    printf '{\n    "agents": ["claude_code"],\n    "packages": ["yuanmaharsyah/admin-core"],\n    "cloud": false\n}\n' > boost.json
+    touch CLAUDE.md
+fi
+run php artisan boost:install --guidelines --skills --mcp --no-interaction
+
+step "Commit the new project"
+run git init --quiet
+run git add --all
+run git commit --quiet -m "chore: new project from admin skeleton $ref"
+
+((dry_run)) && echo "Dry run: nothing was written." && exit 0
+echo "Done in $((SECONDS - started))s: $target (yuanmaharsyah/admin-core $ref). Sign in as superadmin with the password printed above."

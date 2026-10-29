@@ -1,0 +1,6 @@
+.DS_Store
+/vendor
+
+# The owner's private design sources: kept out of the public repository.
+/docs/design-implementation/reference/
+/docs/design-implementation/briefs/

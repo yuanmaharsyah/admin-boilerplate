@@ -1,0 +1,34 @@
+{
+    "name": "yuan/admin-boilerplate",
+    "description": "Development monorepo for yuanmaharsyah/admin-core and the skeleton app. Scripts only; no dependencies.",
+    "type": "project",
+    "license": "MIT",
+    "require": {},
+    "scripts": {
+        "setup": [
+            "Composer\\Config::disableProcessTimeout",
+            "@composer --working-dir=packages/admin-core install --no-interaction",
+            "@composer --working-dir=skeleton setup"
+        ],
+        "check": [
+            "Composer\\Config::disableProcessTimeout",
+            "@composer --working-dir=packages/admin-core lint:check",
+            "@composer --working-dir=packages/admin-core dump-autoload --optimize --strict-psr",
+            "@composer --working-dir=packages/admin-core analyse",
+            "@composer --working-dir=packages/admin-core test",
+            "npm --prefix skeleton run icons",
+            "@check:icons",
+            "@composer --working-dir=skeleton check"
+        ],
+        "check:icons": "git diff --exit-code -- packages/admin-core/resources/icons/lucide.json && test -z \"$(git ls-files --others --exclude-standard -- packages/admin-core/resources/icons/lucide.json)\" || (echo 'lucide.json is stale or untracked: run npm run icons in skeleton/, then commit it.' && exit 1)",
+        "release": "bin/release",
+        "test:release": "@composer --working-dir=skeleton test:release"
+    },
+    "scripts-descriptions": {
+        "setup": "Install the package and the skeleton, create the app and test databases, build assets. Safe to re-run: an existing APP_KEY is never rotated.",
+        "check": "Run every quality gate (spec §9): the package's, then the skeleton's composer check. Fails on the first error.",
+        "check:icons": "Fail if the generated lucide.json differs from git or is untracked.",
+        "release": "composer release -- {version} [--dry-run] [--yes]: split packages/admin-core into its private repo and tag it (refuses on a dirty tree or a red composer check; asks before pushing).",
+        "test:release": "The skeleton's create-project test (bin/release runs it after composer check)."
+    }
+}

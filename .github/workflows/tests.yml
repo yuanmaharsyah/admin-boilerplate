@@ -1,0 +1,53 @@
+name: tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: admin_boilerplate
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql, intl, zip, gd, bcmath
+          coverage: none
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: skeleton/package-lock.json
+
+      - name: Environment
+        run: |
+          cp skeleton/.env.example skeleton/.env
+          sed -i -e 's/^DB_USERNAME=.*/DB_USERNAME=root/' -e 's/^DB_PASSWORD=.*/DB_PASSWORD=root/' skeleton/.env
+          mysql -h 127.0.0.1 -uroot -proot -e 'CREATE DATABASE IF NOT EXISTS admin_boilerplate_test'
+
+      - name: Setup
+        run: composer setup
+
+      - name: Browser for the browser tests
+        working-directory: skeleton
+        run: npx playwright install --with-deps chromium
+
+      - name: Every gate
+        run: composer check

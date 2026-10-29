@@ -1,0 +1,168 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "yuanmaharsyah/admin-skeleton",
+    "type": "project",
+    "description": "Start a Laravel 13 admin app on yuanmaharsyah/admin-core: composer create-project yuanmaharsyah/admin-skeleton my-app.",
+    "keywords": [
+        "laravel",
+        "admin",
+        "admin-panel",
+        "skeleton",
+        "inertia",
+        "react"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.4",
+        "inertiajs/inertia-laravel": "^3.0",
+        "laravel/fortify": "^1.37.2",
+        "laravel/framework": "^13.17",
+        "laravel/tinker": "^3.0",
+        "laravel/wayfinder": "^0.1.23",
+        "yuanmaharsyah/admin-core": "@dev"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.24",
+        "larastan/larastan": "^3.13",
+        "laravel/boost": "^2.10",
+        "laravel/pail": "^1.2.5",
+        "laravel/pao": "^1.0.6",
+        "laravel/pint": "^1.27",
+        "laravel/sail": "^1.53",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.9.3",
+        "pestphp/pest": "^5.3",
+        "pestphp/pest-plugin-browser": "^5.1",
+        "pestphp/pest-plugin-laravel": "^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/",
+            "Modules\\": "modules/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "setup": [
+            "Composer\\Config::disableProcessTimeout",
+            "composer install --no-interaction",
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php -r \"preg_match('/^APP_KEY=./m', file_get_contents('.env')) || passthru(escapeshellarg(PHP_BINARY).' artisan key:generate --ansi') || preg_match('/^APP_KEY=./m', file_get_contents('.env')) || exit(1);\"",
+            "@php artisan migrate --force --seed --ansi",
+            "@php artisan storage:link --ansi",
+            "@php -r \"putenv('DB_DATABASE='.preg_replace('/.*name=.DB_DATABASE. value=.([^\\x22]*).*/s', '\\1', file_get_contents('phpunit.xml'))); passthru(escapeshellarg(PHP_BINARY).' artisan migrate --force --ansi', \\$code); exit(\\$code);\"",
+            "@php artisan typescript:transform --ansi",
+            "@php artisan wayfinder:generate --with-form --ansi",
+            "npm ci",
+            "npm run build"
+        ],
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php artisan dev"
+        ],
+        "check": [
+            "Composer\\Config::disableProcessTimeout",
+            "@lint:check",
+            "@composer dump-autoload --optimize --strict-psr",
+            "@analyse",
+            "@php artisan typescript:transform --ansi",
+            "@php artisan wayfinder:generate --with-form --ansi",
+            "@check:generated",
+            "npm run typecheck",
+            "npm run lint",
+            "@test",
+            "npm run build",
+            "@test:built"
+        ],
+        "check:generated": "(git diff --exit-code -- resources/js/actions resources/js/routes resources/js/wayfinder resources/js/types/generated.d.ts && test -z \"$(git ls-files --others --exclude-standard -- resources/js/actions resources/js/routes resources/js/wayfinder resources/js/types/generated.d.ts)\" || (echo 'Generated files are stale or untracked: regenerate, then commit them.' && exit 1)) && (! grep -rnE '(^|[[:space:]\"(=])(/Users/|/home/|/private/|/var/folders/|/tmp/|[A-Za-z]:[\\\\/])|@see (Users|home|private|var|tmp|opt|mnt|root|srv|Volumes)/' resources/js/actions resources/js/routes resources/js/wayfinder resources/js/types/generated.d.ts || (echo 'Generated files contain absolute paths (machine-specific): regenerate them.' && exit 1))",
+        "lint": [
+            "pint --parallel"
+        ],
+        "lint:check": [
+            "pint --parallel --test"
+        ],
+        "test": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test"
+        ],
+        "test:built": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test --group=vite --group=browser"
+        ],
+        "test:perf": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test --group=perf"
+        ],
+        "test:release": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test --group=release"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+            "@php artisan typescript:transform --ansi",
+            "@php artisan wayfinder:generate --with-form --ansi",
+            "@php -r \"file_exists('boost.json') || exit(0); passthru(escapeshellarg(PHP_BINARY).' artisan boost:update --no-discover --ansi', \\$code); exit(\\$code);\""
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "pre-package-uninstall": [
+            "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+        ],
+        "analyse": [
+            "phpstan analyse --memory-limit=1G"
+        ],
+        "sample:regenerate": [
+            "@php tests/Fixtures/regenerate-sample.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": [],
+            "installer": {
+                "post-create-project": []
+            }
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "repositories": {
+        "admin-core": {
+            "type": "path",
+            "url": "../packages/admin-core",
+            "options": {
+                "symlink": true
+            }
+        }
+    },
+    "scripts-descriptions": {
+        "setup": "Install, create the app and test databases (migrate + seed), link public storage (Settings logos), generate types and routes, build assets. Safe to re-run: an existing APP_KEY is never rotated.",
+        "check": "Run every quality gate (spec §9). Fails on the first error.",
+        "check:generated": "Fail if generated files differ from git, are untracked, or contain an absolute path.",
+        "test:release": "composer create-project of the skeleton as bin/release publishes it, from local path repositories (slow; bin/release runs it)."
+    },
+    "homepage": "https://github.com/yuanmaharsyah/admin-boilerplate",
+    "support": {
+        "issues": "https://github.com/yuanmaharsyah/admin-boilerplate/issues",
+        "source": "https://github.com/yuanmaharsyah/admin-boilerplate"
+    }
+}

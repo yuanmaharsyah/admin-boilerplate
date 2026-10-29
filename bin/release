@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+# composer release -- X.Y.Z[-rc.N] [--dry-run] [--yes]
+#
+# Run from the public repository (origin github.com/yuanmaharsyah/admin-boilerplate).
+# Publishes packages/admin-core to its repository (git remote "admin-core",
+# Packagist yuanmaharsyah/admin-core) and skeleton/ to yuanmaharsyah/admin-skeleton
+# (remote "admin-skeleton", for `composer create-project`): each as one
+# snapshot commit per release on top of that repository's previous release, so
+# their main only ever fast-forwards (this repository's own history doesn't
+# have to share theirs). The skeleton's composer.json comes from
+# bin/skeleton-composer.php (the package from Packagist, no monorepo path
+# repository) and it ships without composer.lock. Tags both and this repo with
+# the same vX.Y.Z, so bin/new-project copies the matching skeleton.
+# Refuses on bad SemVer, another origin, a dirty tree, an existing tag, a
+# missing CHANGELOG entry, a red composer check or a red composer test:release.
+# --dry-run runs every check and prints the writes instead of doing them.
+# Without --yes it asks before pushing. Keep the "--": composer swallows
+# options such as --dry-run otherwise, and the question is the safety net.
+set -euo pipefail
+
+DEFAULT_REMOTE=git@github.com:yuanmaharsyah/yuan-admin-core.git
+SKELETON_DEFAULT_REMOTE=git@github.com:yuanmaharsyah/admin-skeleton.git
+PUBLIC_REPO=yuanmaharsyah/admin-boilerplate
+PREFIX=packages/admin-core
+
+fail() {
+    echo "release: $*" >&2
+    exit 1
+}
+
+version=''
+dry_run=0
+yes=0
+for arg in "$@"; do
+    case $arg in
+        --dry-run) dry_run=1 ;;
+        --yes) yes=1 ;;
+        -*) fail "unknown option $arg" ;;
+        *) version=$arg ;;
+    esac
+done
+
+run() {
+    if ((dry_run)); then
+        echo "would run: $*"
+    else
+        "$@"
+    fi
+}
+
+[[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$ ]] || fail "usage: composer release -- X.Y.Z[-rc.N] [--dry-run] [--yes] (got '${version}')"
+tag="v$version"
+
+cd "$(git rev-parse --show-toplevel)"
+[[ -d $PREFIX ]] || fail "$PREFIX not found: run from the boilerplate repo"
+origin=$(git remote get-url origin 2>/dev/null || true)
+[[ -z $origin || $origin =~ $PUBLIC_REPO(\.git)?$ ]] || fail "release from the public repository ($PUBLIC_REPO), not $origin"
+[[ -z $(git status --porcelain) ]] || fail "the working tree is not clean: commit or stash first"
+
+remote=$(git remote get-url admin-core 2>/dev/null || echo "$DEFAULT_REMOTE")
+git rev-parse -q --verify "refs/tags/$tag" >/dev/null && fail "tag $tag already exists in this repo"
+remote_tags=$(git ls-remote --tags "$remote" "refs/tags/$tag") || fail "cannot reach $remote"
+[[ -z $remote_tags ]] || fail "tag $tag already exists on $remote"
+skeleton_remote=$(git remote get-url admin-skeleton 2>/dev/null || echo "$SKELETON_DEFAULT_REMOTE")
+skeleton_tags=$(git ls-remote --tags "$skeleton_remote" "refs/tags/$tag") || fail "cannot reach $skeleton_remote"
+[[ -z $skeleton_tags ]] || fail "tag $tag already exists on $skeleton_remote"
+
+changelog=$PREFIX/CHANGELOG.md
+if [[ $version == *-rc.* ]]; then
+    awk '/^## \[Unreleased\]/ { section = 1; next } /^## \[/ { section = 0 } section && /^- / { found = 1 } END { exit !found }' "$changelog" \
+        || fail "$changelog: [Unreleased] has no entries"
+else
+    awk -v heading="## [$version]" 'index($0, heading) == 1 { found = 1 } END { exit !found }' "$changelog" \
+        || fail "$changelog has no '## [$version]' heading"
+fi
+
+composer check || fail "composer check is red"
+composer test:release || fail "composer test:release is red"
+
+if ((!dry_run && !yes)); then
+    [[ -t 0 ]] || fail "not a terminal: pass --yes to release without the question"
+    read -r -p "Push yuanmaharsyah/admin-core and yuanmaharsyah/admin-skeleton $tag, and tag this repo? [y/N] " answer
+    [[ $answer == y || $answer == Y ]] || fail "cancelled"
+fi
+
+git remote get-url admin-core >/dev/null 2>&1 || run git remote add admin-core "$remote"
+git remote get-url admin-skeleton >/dev/null 2>&1 || run git remote add admin-skeleton "$skeleton_remote"
+
+# One commit holding a folder of HEAD, on top of the remote's main when it has
+# one (the previous release), so that main only ever fast-forwards.
+snapshot() {
+    local folder=$1 remote=$2 message=$3 index tree blob
+    local parent=()
+    if git fetch --quiet "$remote" main 2>/dev/null; then
+        parent=(-p FETCH_HEAD)
+    fi
+    index=$(mktemp -u)
+    GIT_INDEX_FILE=$index git read-tree "HEAD:$folder"
+    if [[ $folder == skeleton ]]; then
+        blob=$(git show HEAD:skeleton/composer.json | php bin/skeleton-composer.php "$version" | git hash-object -w --stdin)
+        GIT_INDEX_FILE=$index git update-index --cacheinfo "100644,$blob,composer.json"
+        GIT_INDEX_FILE=$index git update-index --force-remove composer.lock
+    fi
+    tree=$(GIT_INDEX_FILE=$index git write-tree)
+    rm -f "$index"
+    git commit-tree "$tree" ${parent[@]+"${parent[@]}"} -m "$message"
+}
+
+if ((dry_run)); then
+    package='<package snapshot>'
+    skeleton='<skeleton snapshot>'
+    echo "would publish: $PREFIX/ at HEAD on top of admin-core main"
+    echo "would publish: skeleton/ at HEAD with bin/skeleton-composer.php $version, without composer.lock, on top of admin-skeleton main"
+else
+    package=$(snapshot "$PREFIX" admin-core "yuanmaharsyah/admin-core $tag")
+    skeleton=$(snapshot skeleton admin-skeleton "yuanmaharsyah/admin-skeleton $tag")
+fi
+
+run git push admin-core "$package:refs/heads/main"
+run git push admin-core "$package:refs/tags/$tag"
+run git push admin-skeleton "$skeleton:refs/heads/main"
+run git push admin-skeleton "$skeleton:refs/tags/$tag"
+run git tag -a "$tag" -m "yuanmaharsyah/admin-core $tag"
+
+if git remote get-url origin >/dev/null 2>&1; then
+    run git push origin "$tag"
+else
+    echo "No origin remote: push the $tag tag of this repo when it has one."
+fi
+
+((dry_run)) && echo "Dry run: nothing was pushed or tagged." || echo "Released yuanmaharsyah/admin-core $tag to $remote and yuanmaharsyah/admin-skeleton $tag to $skeleton_remote."

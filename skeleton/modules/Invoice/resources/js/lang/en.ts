@@ -1,0 +1,33 @@
+import type { id } from './id';
+
+/* English fallback; tsc fails on a missing or an extra key. */
+export const en: Record<keyof typeof id, string> = {
+    'invoices.title': 'Invoices',
+    'invoices.description': 'Bills to customers.',
+    'invoices.list': 'Invoice list',
+    'invoices.item': 'invoices',
+    'invoices.search': 'Search number or notes…',
+    'invoices.empty_title': 'No invoices yet',
+    'invoices.empty_text': 'Invoices you create appear here.',
+    'invoices.delete_title': 'Delete invoice',
+    'invoices.create_title': 'New invoice',
+    'invoices.edit_title': 'Edit {number}',
+    'invoices.section_main': 'Invoice',
+    'invoices.section_payment': 'Payment',
+    'invoices.section_files': 'Files',
+    'invoices.number': 'Number',
+    'invoices.customer': 'Customer',
+    'invoices.customer_placeholder': 'Search customers…',
+    'invoices.issued_on': 'Date',
+    'invoices.due_at': 'Due',
+    'invoices.status': 'Status',
+    'invoices.payment_method': 'Payment method',
+    'invoices.total': 'Total',
+    'invoices.tax_rate': 'VAT (%)',
+    'invoices.send_reminder': 'Send a reminder before the due date',
+    'invoices.npwp': 'Tax ID (NPWP)',
+    'invoices.npwp_help': '15 or 16 digits, no dots.',
+    'invoices.notes': 'Notes',
+    'invoices.yes': 'Yes',
+    'invoices.no': 'No',
+};
