@@ -38,7 +38,7 @@ it('lets a new Operator open Beranda and view the project modules, never Users, 
 
     $permissions = Level::query()->where('name', 'operator')->sole()->permissions()->orderBy('name')->pluck('name')->all();
 
-    expect($permissions)->toBe(['customers.view', 'dashboard.view', 'invoices.view', 'sample-readonly.view', 'samples.view']);
+    expect($permissions)->toBe(['customers.view', 'dashboard.view', 'invoices.view', 'kanban.view', 'sample-readonly.view', 'samples.view', 'tickets.view']);
 
     foreach (['users.', 'levels.', 'audit-log.', 'settings.'] as $core) {
         expect(array_filter($permissions, fn (string $name): bool => str_starts_with($name, $core)))->toBe([]);

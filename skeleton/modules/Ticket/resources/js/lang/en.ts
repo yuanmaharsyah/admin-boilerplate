@@ -1,0 +1,30 @@
+import type { id } from './id';
+
+/* English fallback; tsc fails on a missing or an extra key. Generated with the Indonesian text: translate it. */
+export const en: Record<keyof typeof id, string> = {
+    'tickets.title': 'Tiket',
+    'tickets.description': 'Help requests from users.',
+    'tickets.list': 'Daftar tiket',
+    'tickets.item': 'tiket',
+    'tickets.search': 'Search number, subject or requester…',
+    'tickets.empty_title': 'Belum ada tiket',
+    'tickets.empty_text': 'Tickets you create show up here.',
+    'tickets.delete_title': 'Hapus tiket',
+    'tickets.create_title': 'Tambah tiket',
+    'tickets.edit_title': 'Edit {name}',
+    'tickets.section_main': 'Tiket',
+    'tickets.section_files': 'Berkas',
+    'tickets.yes': 'Ya',
+    'tickets.no': 'Tidak',
+    'tickets.number': 'Number',
+    'tickets.subject': 'Subject',
+    'tickets.requester': 'Requester',
+    'tickets.message': 'Message',
+    'tickets.priority': 'Priority',
+    'tickets.status': 'Status',
+    'tickets.assignee': 'Agent',
+    'tickets.kpi_total': 'Total tickets',
+    'tickets.kpi_new': 'New',
+    'tickets.kpi_open': 'Open',
+    'tickets.kpi_done': 'Closed',
+};

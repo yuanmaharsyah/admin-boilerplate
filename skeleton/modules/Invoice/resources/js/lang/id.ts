@@ -2,6 +2,16 @@ import type { ModuleDictionary } from '@admin-core/lib/i18n';
 
 /* Strings of the Invoice module; every key starts with `invoices.`. `en.ts` must have exactly the same keys. */
 export const id = {
+    'invoices.report_monthly': 'Laporan bulanan',
+    'invoices.report_yearly': 'Laporan tahunan',
+    'invoices.report_description':
+        'Jumlah dan total invoice per periode yang boleh Anda lihat.',
+    'invoices.report_chart': 'Total per periode',
+    'invoices.report_period': 'Periode',
+    'invoices.report_count': 'Jumlah',
+    'invoices.report_paid': 'Lunas',
+    'invoices.report_total': 'Total',
+    'invoices.report_unit': 'juta Rupiah',
     'invoices.title': 'Invoice',
     'invoices.description': 'Tagihan kepada pelanggan.',
     'invoices.list': 'Daftar invoice',

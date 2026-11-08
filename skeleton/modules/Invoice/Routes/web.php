@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 use Modules\Invoice\Http\Controllers\InvoiceController;
+use Modules\Invoice\Http\Controllers\InvoiceReportController;
 use Modules\Invoice\Models\Invoice;
 use Yuan\AdminCore\Attachments\AttachmentController;
 use Yuan\AdminCore\Trash\TrashController;
@@ -12,6 +13,8 @@ TrashController::routes(Invoice::class);
 AttachmentController::routes(Invoice::class);
 
 Route::get('/', [InvoiceController::class, 'index'])->middleware('permission:invoices.view')->name('index');
+Route::get('reports/monthly', [InvoiceReportController::class, 'monthly'])->middleware('permission:invoices.view')->name('reports.monthly');
+Route::get('reports/yearly', [InvoiceReportController::class, 'yearly'])->middleware('permission:invoices.view')->name('reports.yearly');
 Route::get('download', [InvoiceController::class, 'download'])->middleware('permission:invoices.download')->name('download');
 Route::get('create', [InvoiceController::class, 'create'])->middleware('permission:invoices.create')->name('create');
 Route::post('/', [InvoiceController::class, 'store'])->middleware('permission:invoices.create')->name('store');

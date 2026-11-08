@@ -149,6 +149,12 @@ return [
 
     'features' => [
         Features::resetPasswords(),
+        // Opened or closed by Pengaturan → Keamanan → registrasi (CreateNewUser, the views).
+        Features::registration(),
+        Features::twoFactorAuthentication([
+            'confirm' => true,
+            'confirmPassword' => true,
+        ]),
     ],
 
 ];

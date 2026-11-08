@@ -116,3 +116,15 @@ it('downloads a small list at once and queues a large one, reachable from the ba
         ->assertPresent('[aria-label^="Unduh invoices-"]')
         ->assertNoJavaScriptErrors();
 });
+
+it('shows a picked image as a thumbnail in the drop zone list', function (): void {
+    $invoice = Invoice::factory()->create();
+    // A 1×1 PNG.
+    $png = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', true);
+
+    visit("/admin/invoices/{$invoice->id}/edit")
+        ->attach('[id="files.bukti_bayar"]', fixtureFile('bukti.png', (string) $png))
+        ->assertPresent('img[src^="blob:"]')
+        ->assertSee('bukti.png')
+        ->assertNoJavaScriptErrors();
+});

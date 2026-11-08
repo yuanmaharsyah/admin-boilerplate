@@ -109,7 +109,7 @@ it('changes the password, audits password_changed and flashes success', function
         'current_password' => 'password',
         'password' => 'GantiBaru12345',
         'password_confirmation' => 'GantiBaru12345',
-    ])->assertRedirect(route('admin-core.home'))->assertInertiaFlash('success', 'Kata sandi berhasil diubah.');
+    ])->assertRedirect(route('account.profile.edit'))->assertInertiaFlash('success', 'Kata sandi berhasil diubah.');
 
     $row = ImmutableActivity::query()->where('event', 'password_changed')->sole();
     expect(password_verify('GantiBaru12345', (string) $user->fresh()?->password))->toBeTrue()

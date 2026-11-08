@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
 * @see \Yuan\AdminCore\Account\ProfileController::edit
-* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:25
+* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:47
 * @route '/account/profile'
 */
 export const edit = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ edit.definition = {
 
 /**
 * @see \Yuan\AdminCore\Account\ProfileController::edit
-* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:25
+* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:47
 * @route '/account/profile'
 */
 edit.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ edit.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \Yuan\AdminCore\Account\ProfileController::edit
-* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:25
+* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:47
 * @route '/account/profile'
 */
 edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \Yuan\AdminCore\Account\ProfileController::edit
-* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:25
+* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:47
 * @route '/account/profile'
 */
 edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \Yuan\AdminCore\Account\ProfileController::edit
-* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:25
+* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:47
 * @route '/account/profile'
 */
 const editForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const editForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \Yuan\AdminCore\Account\ProfileController::edit
-* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:25
+* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:47
 * @route '/account/profile'
 */
 editForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ editForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \Yuan\AdminCore\Account\ProfileController::edit
-* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:25
+* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:47
 * @route '/account/profile'
 */
 editForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ edit.form = editForm
 
 /**
 * @see \Yuan\AdminCore\Account\ProfileController::update
-* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:43
+* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:77
 * @route '/account/profile'
 */
 export const update = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -97,7 +97,7 @@ update.definition = {
 
 /**
 * @see \Yuan\AdminCore\Account\ProfileController::update
-* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:43
+* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:77
 * @route '/account/profile'
 */
 update.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ update.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \Yuan\AdminCore\Account\ProfileController::update
-* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:43
+* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:77
 * @route '/account/profile'
 */
 update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -116,7 +116,7 @@ update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
 
 /**
 * @see \Yuan\AdminCore\Account\ProfileController::update
-* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:43
+* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:77
 * @route '/account/profile'
 */
 const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -131,7 +131,7 @@ const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> =>
 
 /**
 * @see \Yuan\AdminCore\Account\ProfileController::update
-* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:43
+* @see vendor/yuanmaharsyah/admin-core/src/Account/ProfileController.php:77
 * @route '/account/profile'
 */
 updateForm.put = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

@@ -4,6 +4,7 @@ import type {
     DataTableColumn,
     RowAction,
 } from '@admin-core/components/admin/DataTable';
+import { DetailGrid } from '@admin-core/components/admin/DetailGrid';
 import { PageHeader } from '@admin-core/components/admin/PageHeader';
 import { Button } from '@admin-core/components/ui/button';
 import { usePermission } from '@admin-core/hooks/usePermission';
@@ -134,6 +135,32 @@ export default function Index({ invoices, table }: Props) {
                         can('invoices.view') ? (row) => show(row.id) : undefined
                     }
                     rowActions={rowActions}
+                    stickyHeader
+                    reorderColumns
+                    expandable={(row) => (
+                        <DetailGrid
+                            items={[
+                                {
+                                    label: t('invoices.customer'),
+                                    value: row.customer_name,
+                                },
+                                {
+                                    label: t('invoices.due_at'),
+                                    value: row.due_at
+                                        ? formatLocalDate(row.due_at)
+                                        : '—',
+                                },
+                                {
+                                    label: t('invoices.payment_method'),
+                                    value: row.payment_method_label ?? '—',
+                                },
+                                {
+                                    label: t('invoices.notes'),
+                                    value: row.notes ?? '—',
+                                },
+                            ]}
+                        />
+                    )}
                     bulkDelete={
                         can('invoices.delete')
                             ? (ids, onFinish) =>

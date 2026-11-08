@@ -122,7 +122,13 @@ final class ContractAssertions
         $routes->refreshNameLookups();
 
         foreach (app(ModuleRegistry::class)->enabled() as $module) {
+            $links = [];
+
             foreach ($module->submenu as $child) {
+                array_push($links, ...($child['route'] === null ? $child['submenu'] : [$child]));
+            }
+
+            foreach ($links as $child) {
                 $name = "{$module->slug}.{$child['route']}";
                 $route = $routes->getByName($name);
 

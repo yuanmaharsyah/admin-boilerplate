@@ -22,6 +22,7 @@ This project is a Laravel 13 + Inertia 3 + React 19 + TypeScript admin panel bui
 - Routes in a module are relative; the registry adds the `/admin/{slug}` prefix, the `{slug}.` name prefix and the base middleware.
 - A module may use another module's **Models** only. Shared logic belongs in the core package.
 - Inertia page names are `{Name}::{Page}`.
+- A module only for developers (a tool, a catalogue, a sample) goes in `admin-core.modules.dev_only`: on locally and on staging, switched off completely in production. Komponen (`components`) is listed there.
 
 ### RBAC
 

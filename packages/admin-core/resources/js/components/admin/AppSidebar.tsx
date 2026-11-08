@@ -12,6 +12,9 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
@@ -150,9 +153,17 @@ export function AppSidebar({
                         >
                             <span
                                 aria-hidden="true"
-                                className="flex size-8 shrink-0 items-center justify-center rounded-full bg-sidebar-accent text-xs font-semibold"
+                                className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-sidebar-accent text-xs font-semibold"
                             >
-                                {initials(auth.user.name)}
+                                {auth.user.avatar_url ? (
+                                    <img
+                                        src={auth.user.avatar_url}
+                                        alt=""
+                                        className="size-full object-cover"
+                                    />
+                                ) : (
+                                    initials(auth.user.name)
+                                )}
                             </span>
                             {!collapsed && (
                                 <span className="flex min-w-0 flex-col">
@@ -269,24 +280,35 @@ function SidebarItem({
                     <DropdownMenuLabel className="text-label text-muted-foreground uppercase">
                         {item.label}
                     </DropdownMenuLabel>
-                    {item.children.map((child) => (
-                        <DropdownMenuItem key={child.route} asChild>
-                            <Link
-                                href={child.href}
-                                aria-current={
-                                    child.route === activeRoute
-                                        ? 'page'
-                                        : undefined
-                                }
-                                className="w-full aria-[current=page]:font-medium"
-                            >
-                                <span className="flex-1 truncate">
-                                    {child.label}
-                                </span>
-                                {child.badge && <Badge>{child.badge}</Badge>}
-                            </Link>
-                        </DropdownMenuItem>
-                    ))}
+                    {item.children.map((child) =>
+                        child.children.length > 0 ? (
+                            <DropdownMenuSub key={child.label}>
+                                <DropdownMenuSubTrigger>
+                                    <span className="flex-1 truncate">
+                                        {child.label}
+                                    </span>
+                                    {child.badge && (
+                                        <Badge>{child.badge}</Badge>
+                                    )}
+                                </DropdownMenuSubTrigger>
+                                <DropdownMenuSubContent className="w-52">
+                                    {child.children.map((link) => (
+                                        <FlyoutLink
+                                            key={link.route ?? link.label}
+                                            link={link}
+                                            activeRoute={activeRoute}
+                                        />
+                                    ))}
+                                </DropdownMenuSubContent>
+                            </DropdownMenuSub>
+                        ) : (
+                            <FlyoutLink
+                                key={child.route ?? child.label}
+                                link={child}
+                                activeRoute={activeRoute}
+                            />
+                        ),
+                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
         );
@@ -316,49 +338,162 @@ function SidebarItem({
                     )}
                 />
             </button>
-            <div
+            <ChildList
                 id={listId}
-                inert={!open}
-                className={cn(
-                    'grid transition-[grid-template-rows] duration-200 ease-out',
-                    open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
-                )}
-            >
-                <ul className="m-0 ml-5 flex min-h-0 list-none flex-col gap-0.5 overflow-hidden border-l border-sidebar-border p-0 pl-2">
-                    {item.children.map((child, index) => {
-                        const current = child.route === activeRoute;
-
-                        return (
-                            <li
-                                key={child.route}
-                                className={cn(index === 0 && 'mt-0.5')}
-                            >
-                                <Link
-                                    href={child.href}
-                                    aria-current={current ? 'page' : undefined}
-                                    className={cn(
-                                        'flex items-center gap-2 rounded-md px-3 text-body transition-colors duration-200',
-                                        touch ? 'h-row' : 'h-control',
-                                        current
-                                            ? 'bg-sidebar-accent font-medium text-sidebar-accent-foreground'
-                                            : cn(
-                                                  idleClass,
-                                                  'text-muted-foreground',
-                                              ),
-                                    )}
-                                >
-                                    <span className="flex-1 truncate">
-                                        {child.label}
-                                    </span>
-                                    {child.badge && (
-                                        <Badge>{child.badge}</Badge>
-                                    )}
-                                </Link>
-                            </li>
-                        );
-                    })}
-                </ul>
-            </div>
+                open={open}
+                items={item.children}
+                activeRoute={activeRoute}
+                touch={touch}
+            />
         </div>
+    );
+}
+
+type Child = Yuan.AdminCore.Data.MenuChildData;
+
+/** The child links to the current route, or holds the one that does. */
+function holdsRoute(child: Child, route: string | null): boolean {
+    return (
+        child.route === route ||
+        child.children.some((nested) => holdsRoute(nested, route))
+    );
+}
+
+/** A disclosure's children under a guide line; the height animates open and closed. */
+function ChildList({
+    id,
+    open,
+    items,
+    activeRoute,
+    touch,
+}: {
+    id: string;
+    open: boolean;
+    items: Child[];
+    activeRoute: string | null;
+    touch: boolean;
+}) {
+    return (
+        <div
+            id={id}
+            inert={!open}
+            className={cn(
+                'grid transition-[grid-template-rows] duration-200 ease-out',
+                open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+            )}
+        >
+            <ul className="m-0 ml-5 flex min-h-0 list-none flex-col gap-0.5 overflow-hidden border-l border-sidebar-border p-0 pl-2">
+                {items.map((child, index) => (
+                    <li
+                        key={child.route ?? child.label}
+                        className={cn(index === 0 && 'mt-0.5')}
+                    >
+                        <ChildEntry
+                            child={child}
+                            activeRoute={activeRoute}
+                            touch={touch}
+                        />
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+/** A second- or third-level entry: a link, or a parent of links (the third level). */
+function ChildEntry({
+    child,
+    activeRoute,
+    touch,
+}: {
+    child: Child;
+    activeRoute: string | null;
+    touch: boolean;
+}) {
+    const [open, setOpen] = useState(holdsRoute(child, activeRoute));
+    const listId = useId();
+    const rowClass = cn(
+        'flex w-full items-center gap-2 rounded-md px-3 text-body transition-colors duration-200',
+        touch ? 'h-row' : 'h-control',
+    );
+    const badge = child.badge && <Badge>{child.badge}</Badge>;
+
+    if (child.href === null) {
+        return (
+            <>
+                <button
+                    type="button"
+                    aria-expanded={open}
+                    aria-controls={listId}
+                    onClick={() => setOpen(!open)}
+                    className={cn(
+                        rowClass,
+                        idleClass,
+                        holdsRoute(child, activeRoute)
+                            ? 'text-foreground'
+                            : 'text-muted-foreground',
+                    )}
+                >
+                    <span className="flex-1 truncate text-left">
+                        {child.label}
+                    </span>
+                    {badge}
+                    <ChevronRight
+                        aria-hidden="true"
+                        className={cn(
+                            'size-4 shrink-0 transition-transform duration-200',
+                            open && 'rotate-90',
+                        )}
+                    />
+                </button>
+                <ChildList
+                    id={listId}
+                    open={open}
+                    items={child.children}
+                    activeRoute={activeRoute}
+                    touch={touch}
+                />
+            </>
+        );
+    }
+
+    const current = child.route === activeRoute;
+
+    return (
+        <Link
+            href={child.href}
+            aria-current={current ? 'page' : undefined}
+            className={cn(
+                rowClass,
+                current
+                    ? 'bg-sidebar-accent font-medium text-sidebar-accent-foreground'
+                    : cn(idleClass, 'text-muted-foreground'),
+            )}
+        >
+            <span className="flex-1 truncate">{child.label}</span>
+            {badge}
+        </Link>
+    );
+}
+
+/** One link in the collapsed sidebar's flyout. */
+function FlyoutLink({
+    link,
+    activeRoute,
+}: {
+    link: Child;
+    activeRoute: string | null;
+}) {
+    return (
+        <DropdownMenuItem asChild>
+            <Link
+                href={link.href ?? ''}
+                aria-current={link.route === activeRoute ? 'page' : undefined}
+                className="w-full aria-[current=page]:font-medium"
+            >
+                <span className="flex-1 truncate">{link.label}</span>
+                {link.badge && <Badge>{link.badge}</Badge>}
+            </Link>
+        </DropdownMenuItem>
     );
 }

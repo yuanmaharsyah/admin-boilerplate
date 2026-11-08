@@ -20,3 +20,9 @@ it('fails on a submenu child whose route does not exist', function (): void {
 
     expect(fn () => ContractAssertions::assertSubmenuRoutes())->toThrow(AssertionFailedError::class, 'Leaky: submenu route "leaky.archive" does not exist');
 });
+
+it('checks the links of the third level too', function (): void {
+    withBrokenModules();
+
+    expect(fn () => ContractAssertions::assertSubmenuRoutes())->toThrow(AssertionFailedError::class, 'Leaky: submenu route "leaky.reports.monthly" does not exist');
+});

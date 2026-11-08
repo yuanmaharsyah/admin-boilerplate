@@ -1,5 +1,13 @@
 import { AreaChartCard } from '@admin-core/components/admin/AreaChartCard';
 import { BarChartCard } from '@admin-core/components/admin/BarChartCard';
+import {
+    HorizontalBarChartCard,
+    LineChartCard,
+    PieChartCard,
+    RadarChartCard,
+    RadialChartCard,
+    StackedBarChartCard,
+} from '@admin-core/components/admin/ChartCards';
 import { ChangePill } from '@admin-core/components/admin/ChangePill';
 import { ConfirmDialog } from '@admin-core/components/admin/ConfirmDialog';
 import { DataTable } from '@admin-core/components/admin/DataTable';
@@ -7,6 +15,7 @@ import type { DataTableColumn } from '@admin-core/components/admin/DataTable';
 import { DateField } from '@admin-core/components/admin/DateField';
 import { DonutCard } from '@admin-core/components/admin/DonutCard';
 import { EmptyState } from '@admin-core/components/admin/EmptyState';
+import { KanbanBoard } from '@admin-core/components/admin/KanbanBoard';
 import { ListCard } from '@admin-core/components/admin/ListCard';
 import { CurrencyField } from '@admin-core/components/admin/NumberField';
 import { PageHeader } from '@admin-core/components/admin/PageHeader';
@@ -40,17 +49,44 @@ const DAYS = Array.from({ length: 14 }, (_, index) => {
 });
 const WAVE = [12, 18, 9, 22, 30, 17, 25, 14, 28, 35, 21, 26, 19, 31];
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'].map(
+    (label, index) => ({
+        label,
+        masuk: [42, 58, 51, 66, 72, 69][index] ?? 0,
+        keluar: [30, 35, 40, 38, 49, 44][index] ?? 0,
+    }),
+);
+const SHARE = [
+    { label: 'Bandung', nilai: 38 },
+    { label: 'Surabaya', nilai: 27 },
+    { label: 'Jakarta', nilai: 21 },
+    { label: 'Medan', nilai: 14 },
+];
+const SKILLS = ['Cepat', 'Tepat', 'Ramah', 'Rapi', 'Tuntas'].map(
+    (label, index) => ({
+        label,
+        tim_a: [80, 65, 90, 70, 75][index] ?? 0,
+        tim_b: [60, 85, 70, 80, 65][index] ?? 0,
+    }),
+);
+const IN_OUT = [
+    { key: 'masuk', label: 'Masuk' },
+    { key: 'keluar', label: 'Keluar' },
+];
+
 const SECTIONS = [
     ['tombol', 'Tombol'],
     ['badge', 'Badge'],
     ['form', 'Form'],
     ['kpi', 'KPI'],
     ['grafik', 'Grafik'],
+    ['grafik-lain', 'Grafik lain'],
     ['daftar', 'Daftar'],
     ['tabel', 'Tabel'],
     ['dialog', 'Dialog'],
     ['kosong', 'Keadaan kosong'],
     ['tab', 'Tab'],
+    ['kanban', 'Kanban'],
     ['menu', 'Menu'],
 ] as const;
 
@@ -62,9 +98,30 @@ export default function Index({ table, state }: Page) {
     const [on, setOn] = useState(true);
     const [confirm, setConfirm] = useState(false);
     const [tab, setTab] = useState('detail');
+    // The inline-edit example keeps its changes on this page only.
+    const [edits, setEdits] = useState<Record<number, Partial<Row>>>({});
+    const edited = (row: Row): Row => ({ ...row, ...edits[row.id] });
+    const keep = (
+        row: Row,
+        change: Partial<Row>,
+        done: (saved: boolean) => void,
+    ) => {
+        setEdits({ ...edits, [row.id]: { ...edits[row.id], ...change } });
+        done(true);
+    };
 
     const columns: DataTableColumn<Row>[] = [
-        { key: 'name', label: 'Pelanggan', className: 'font-medium' },
+        {
+            key: 'name',
+            label: 'Pelanggan',
+            className: 'font-medium',
+            cell: (row) => edited(row).name,
+            edit: {
+                type: 'text',
+                value: (row) => edited(row).name,
+                save: (row, value, done) => keep(row, { name: value }, done),
+            },
+        },
         { key: 'city', label: 'Kota' },
         {
             key: 'date',
@@ -74,10 +131,30 @@ export default function Index({ table, state }: Page) {
         {
             key: 'status',
             label: 'Status',
+            edit: {
+                type: 'select',
+                options: [
+                    { value: 'paid', label: 'Lunas' },
+                    { value: 'sent', label: 'Terkirim' },
+                    { value: 'draft', label: 'Draf' },
+                ],
+                value: (row) => edited(row).status,
+                save: (row, value, done) =>
+                    keep(
+                        row,
+                        {
+                            status:
+                                value === 'paid' || value === 'sent'
+                                    ? value
+                                    : 'draft',
+                        },
+                        done,
+                    ),
+            },
             cell: (row) =>
-                row.status === 'paid' ? (
+                edited(row).status === 'paid' ? (
                     <StatusBadge tone="success" label="Lunas" />
-                ) : row.status === 'sent' ? (
+                ) : edited(row).status === 'sent' ? (
                     <StatusBadge tone="info" label="Terkirim" />
                 ) : (
                     <StatusBadge label="Draf" />
@@ -331,6 +408,59 @@ import { ChangePill } from '@admin-core/components/admin/ChangePill';
                         </Section>
 
                         <Section
+                            id="grafik-lain"
+                            title="Grafik lain"
+                            text="ChartCards: LineChartCard, StackedBarChartCard, HorizontalBarChartCard, PieChartCard (inner untuk donat), RadialChartCard, RadarChartCard. Data: baris { label, ...angka per seri } dan seri { key, label }; warna hanya --chart-*."
+                            code={`import { LineChartCard } from '@admin-core/components/admin/ChartCards';
+
+<LineChartCard title="Arus barang" rows={[{ label: 'Jan', masuk: 42, keluar: 30 }]}
+    series={[{ key: 'masuk', label: 'Masuk' }, { key: 'keluar', label: 'Keluar' }]} />`}
+                        >
+                            <div className="grid gap-6 lg:grid-cols-2 2xl:grid-cols-3">
+                                <LineChartCard
+                                    title="Garis"
+                                    subtitle="Masuk dan keluar per bulan"
+                                    rows={MONTHS}
+                                    series={IN_OUT}
+                                />
+                                <StackedBarChartCard
+                                    title="Batang bertumpuk"
+                                    rows={MONTHS}
+                                    series={IN_OUT}
+                                />
+                                <HorizontalBarChartCard
+                                    title="Batang horizontal"
+                                    rows={SHARE}
+                                    series={[
+                                        { key: 'nilai', label: 'Persentase' },
+                                    ]}
+                                />
+                                <PieChartCard
+                                    title="Pai"
+                                    rows={SHARE}
+                                    series={[
+                                        { key: 'nilai', label: 'Persentase' },
+                                    ]}
+                                />
+                                <RadialChartCard
+                                    title="Radial"
+                                    rows={SHARE}
+                                    series={[
+                                        { key: 'nilai', label: 'Persentase' },
+                                    ]}
+                                />
+                                <RadarChartCard
+                                    title="Radar"
+                                    rows={SKILLS}
+                                    series={[
+                                        { key: 'tim_a', label: 'Tim A' },
+                                        { key: 'tim_b', label: 'Tim B' },
+                                    ]}
+                                />
+                            </div>
+                        </Section>
+
+                        <Section
                             id="daftar"
                             title="Daftar"
                             text="ListCard: ikon, judul, subjudul, nilai kanan (tone), ChangePill, dan bar bagian (progress 0–1)."
@@ -384,10 +514,18 @@ import { ChangePill } from '@admin-core/components/admin/ChangePill';
                         <Section
                             id="tabel"
                             title="Tabel"
-                            text="DataTable (R17): server-side, state di URL, header tebal, baris 56px. Baris masuk dengan fade-up bertahap (data-rows-in di admin-core.css), otomatis tiap halaman baru; jangan menambah animasi sendiri."
+                            text="DataTable (R17): server-side, state di URL, header tebal, baris 56px, fade-up bertahap (data-rows-in). Opsional: expandable (panel rincian), reorderColumns (geser kolom, disimpan per pengguna), onReorder (geser baris), edit per kolom (inline: klik / Enter, Esc batal), stickyHeader, stickyFirstColumn. Kolom: menu Kolom."
                             code={`<DataTable data={invoices} state={table} columns={columns} slug="invoices"
     label="Daftar invoice" itemLabel="invoice" rowLabel={(row) => row.number}
-    rowHref={(row) => show(row.id)} empty={{ title: 'Belum ada invoice' }} />`}
+    rowHref={(row) => show(row.id)} empty={{ title: 'Belum ada invoice' }}
+    stickyHeader reorderColumns expandable={(row) => <DetailGrid items={...} />}
+    onReorder={(ids, done) => router.patch(reorder().url, { ids }, { onSuccess: () => done(true), onError: () => done(false) })} />
+
+// Inline edit of one column:
+{ key: 'status', label: 'Status', edit: { type: 'select', options: statuses,
+    value: (row) => row.status,
+    save: (row, value, done) => router.put(update(row.id).url, { ...row, status: value, lock_version: row.lock_version },
+        { onSuccess: () => done(true), onError: () => done(false) }) } }`}
                         >
                             <DataTable
                                 data={table}
@@ -398,6 +536,21 @@ import { ChangePill } from '@admin-core/components/admin/ChangePill';
                                 itemLabel="baris"
                                 rowLabel={(row) => row.name}
                                 empty={{ title: 'Belum ada data' }}
+                                reorderColumns
+                                stickyFirstColumn
+                                onReorder={(_, done) => done(true)}
+                                expandable={(row) => (
+                                    <div className="flex flex-col gap-1">
+                                        <strong className="text-card-title">
+                                            {edited(row).name}
+                                        </strong>
+                                        <span className="text-muted-foreground">
+                                            {row.city} ·{' '}
+                                            {formatLocalDate(row.date)} ·{' '}
+                                            {formatCurrency(row.total)}
+                                        </span>
+                                    </div>
+                                )}
                             />
                         </Section>
 
@@ -474,6 +627,47 @@ import { ChangePill } from '@admin-core/components/admin/ChangePill';
                                         ),
                                     },
                                 ]}
+                            />
+                        </Section>
+
+                        <Section
+                            id="kanban"
+                            title="Kanban"
+                            text="KanbanBoard: kolom per status, kartu digeser (mouse), dengan keyboard di dalam kolom (Space, panah, Space), atau lewat menu Pindahkan ke (keyboard dan satu klik). onMove mengirim urutan baru ke rute PATCH modul. Contoh nyata: Kanban → Papan."
+                            code={`<KanbanBoard label="Papan tugas" columns={board.columns} items={cards}
+    cardLabel={(card) => card.title} renderCard={(card) => <TaskCard card={card} />}
+    onMove={(columns, done) => router.patch(moveHref, { columns },
+        { onSuccess: () => done(true), onError: () => done(false) })} />`}
+                        >
+                            <KanbanBoard
+                                label="Contoh papan"
+                                columns={[
+                                    {
+                                        key: 'rencana',
+                                        label: 'Rencana',
+                                        ids: [1, 2],
+                                    },
+                                    {
+                                        key: 'dikerjakan',
+                                        label: 'Dikerjakan',
+                                        ids: [3],
+                                    },
+                                    {
+                                        key: 'selesai',
+                                        label: 'Selesai',
+                                        ids: [],
+                                    },
+                                ]}
+                                items={{
+                                    1: 'Rapikan arsip',
+                                    2: 'Siapkan laporan',
+                                    3: 'Periksa invoice',
+                                }}
+                                cardLabel={(item) => item}
+                                renderCard={(item) => (
+                                    <span className="font-medium">{item}</span>
+                                )}
+                                onMove={(_, done) => done(true)}
                             />
                         </Section>
 

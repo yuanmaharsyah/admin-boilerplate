@@ -103,3 +103,26 @@ it('adds the badge and only the submenu children the user may open', function ()
         new MenuChildData('Tambah', url('/admin/invoices/create'), 'invoices.create', 'Baru'),
     ]);
 });
+
+it('nests the third level and drops a parent child whose links are all hidden', function (): void {
+    $root = temporaryRoot();
+    writeModule($root, 'Invoice', [
+        'submenu' => [
+            ['label' => 'Laporan', 'submenu' => [
+                ['label' => 'Bulanan', 'route' => 'reports.monthly'],
+                ['label' => 'Ekspor', 'route' => 'reports.export', 'action' => 'download'],
+            ]],
+            ['label' => 'Arsip', 'submenu' => [['label' => 'Ekspor arsip', 'route' => 'reports.export', 'action' => 'download']]],
+        ],
+    ]);
+    useModuleRoots([['name' => 'project', 'path' => $root, 'namespace' => 'Temp\\']]);
+    Route::get('/admin/invoices', fn (): string => 'index')->name('invoices.index');
+    Route::get('/admin/invoices/reports/monthly', fn (): string => 'monthly')->name('invoices.reports.monthly');
+    Route::get('/admin/invoices/reports/export', fn (): string => 'export')->name('invoices.reports.export');
+    app('router')->getRoutes()->refreshNameLookups();
+    Gate::define('invoices.view', fn (): bool => true);
+
+    expect(app(MenuBuilder::class)->build(makeUser())[0]->items[0]->children)->toEqual([
+        new MenuChildData('Laporan', null, null, null, [new MenuChildData('Bulanan', url('/admin/invoices/reports/monthly'), 'invoices.reports.monthly')]),
+    ]);
+});

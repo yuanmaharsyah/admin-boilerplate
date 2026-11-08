@@ -113,3 +113,18 @@ it('opens the parent of the current page, marks the child and toggles the childr
         ->assertPresent('[role="menu"] a:has-text("Daftar invoice")')
         ->assertNoJavaScriptErrors();
 });
+
+it('opens the third menu level on its page and offers it in the collapsed flyout', function (): void {
+    $user = User::factory()->create();
+    $user->assignLevel(Level::superAdmin());
+    actingAs($user);
+
+    visit('/admin/invoices/reports/monthly')
+        ->assertAttribute('nav[aria-label="Navigasi"] button:has-text("Laporan")', 'aria-expanded', 'true')
+        ->assertPresent('nav[aria-label="Navigasi"] a[aria-current="page"]:has-text("Bulanan")')
+        ->keys('[aria-label="Ciutkan sidebar (Ctrl+B)"]', 'Control+b')
+        ->click('nav[aria-label="Navigasi"] button[aria-label="Invoice"]')
+        ->click('[role="menu"] [role="menuitem"]:has-text("Laporan")')
+        ->assertPresent('[role="menu"] a:has-text("Tahunan")')
+        ->assertNoJavaScriptErrors();
+});

@@ -399,6 +399,166 @@ indexd672c2dc6817ac78edd433b4b5779b8dForm.head = (options?: RouteQueryOptions): 
 })
 
 indexd672c2dc6817ac78edd433b4b5779b8d.form = indexd672c2dc6817ac78edd433b4b5779b8dForm
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::index
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
+* @route '/admin/kanban/trash'
+*/
+const index0df295d40d2896bf4f6e57ee4ddd32cd = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index0df295d40d2896bf4f6e57ee4ddd32cd.url(options),
+    method: 'get',
+})
+
+index0df295d40d2896bf4f6e57ee4ddd32cd.definition = {
+    methods: ["get","head"],
+    url: '/admin/kanban/trash',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::index
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
+* @route '/admin/kanban/trash'
+*/
+index0df295d40d2896bf4f6e57ee4ddd32cd.url = (options?: RouteQueryOptions) => {
+    return index0df295d40d2896bf4f6e57ee4ddd32cd.definition.url + queryParams(options)
+}
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::index
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
+* @route '/admin/kanban/trash'
+*/
+index0df295d40d2896bf4f6e57ee4ddd32cd.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index0df295d40d2896bf4f6e57ee4ddd32cd.url(options),
+    method: 'get',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::index
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
+* @route '/admin/kanban/trash'
+*/
+index0df295d40d2896bf4f6e57ee4ddd32cd.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: index0df295d40d2896bf4f6e57ee4ddd32cd.url(options),
+    method: 'head',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::index
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
+* @route '/admin/kanban/trash'
+*/
+const index0df295d40d2896bf4f6e57ee4ddd32cdForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index0df295d40d2896bf4f6e57ee4ddd32cd.url(options),
+    method: 'get',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::index
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
+* @route '/admin/kanban/trash'
+*/
+index0df295d40d2896bf4f6e57ee4ddd32cdForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index0df295d40d2896bf4f6e57ee4ddd32cd.url(options),
+    method: 'get',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::index
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
+* @route '/admin/kanban/trash'
+*/
+index0df295d40d2896bf4f6e57ee4ddd32cdForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index0df295d40d2896bf4f6e57ee4ddd32cd.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index0df295d40d2896bf4f6e57ee4ddd32cd.form = index0df295d40d2896bf4f6e57ee4ddd32cdForm
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::index
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
+* @route '/admin/tickets/trash'
+*/
+const index5937c017c784b23c6f4fbb5cf53b4501 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index5937c017c784b23c6f4fbb5cf53b4501.url(options),
+    method: 'get',
+})
+
+index5937c017c784b23c6f4fbb5cf53b4501.definition = {
+    methods: ["get","head"],
+    url: '/admin/tickets/trash',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::index
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
+* @route '/admin/tickets/trash'
+*/
+index5937c017c784b23c6f4fbb5cf53b4501.url = (options?: RouteQueryOptions) => {
+    return index5937c017c784b23c6f4fbb5cf53b4501.definition.url + queryParams(options)
+}
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::index
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
+* @route '/admin/tickets/trash'
+*/
+index5937c017c784b23c6f4fbb5cf53b4501.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index5937c017c784b23c6f4fbb5cf53b4501.url(options),
+    method: 'get',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::index
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
+* @route '/admin/tickets/trash'
+*/
+index5937c017c784b23c6f4fbb5cf53b4501.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: index5937c017c784b23c6f4fbb5cf53b4501.url(options),
+    method: 'head',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::index
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
+* @route '/admin/tickets/trash'
+*/
+const index5937c017c784b23c6f4fbb5cf53b4501Form = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index5937c017c784b23c6f4fbb5cf53b4501.url(options),
+    method: 'get',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::index
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
+* @route '/admin/tickets/trash'
+*/
+index5937c017c784b23c6f4fbb5cf53b4501Form.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index5937c017c784b23c6f4fbb5cf53b4501.url(options),
+    method: 'get',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::index
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
+* @route '/admin/tickets/trash'
+*/
+index5937c017c784b23c6f4fbb5cf53b4501Form.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index5937c017c784b23c6f4fbb5cf53b4501.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index5937c017c784b23c6f4fbb5cf53b4501.form = index5937c017c784b23c6f4fbb5cf53b4501Form
 
 /**
 * Multiple routes resolve to \Yuan\AdminCore\Trash\TrashController::index, so this export is a
@@ -412,6 +572,8 @@ export const index = {
     '/admin/invoices/trash': index64daec36d73148742d93855a9e3b98c3,
     '/admin/samples/trash': index4c93005063dbcb63b23c80c16785acdc,
     '/admin/sample-admin/trash': indexd672c2dc6817ac78edd433b4b5779b8d,
+    '/admin/kanban/trash': index0df295d40d2896bf4f6e57ee4ddd32cd,
+    '/admin/tickets/trash': index5937c017c784b23c6f4fbb5cf53b4501,
 }
 
 /**
@@ -689,6 +851,116 @@ restore4b23bc414f616ffac5613a281922ed12Form.post = (options?: RouteQueryOptions)
 })
 
 restore4b23bc414f616ffac5613a281922ed12.form = restore4b23bc414f616ffac5613a281922ed12Form
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::restore
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:101
+* @route '/admin/kanban/trash/restore'
+*/
+const restoree177746e539c841237ab12289d70ab55 = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: restoree177746e539c841237ab12289d70ab55.url(options),
+    method: 'post',
+})
+
+restoree177746e539c841237ab12289d70ab55.definition = {
+    methods: ["post"],
+    url: '/admin/kanban/trash/restore',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::restore
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:101
+* @route '/admin/kanban/trash/restore'
+*/
+restoree177746e539c841237ab12289d70ab55.url = (options?: RouteQueryOptions) => {
+    return restoree177746e539c841237ab12289d70ab55.definition.url + queryParams(options)
+}
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::restore
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:101
+* @route '/admin/kanban/trash/restore'
+*/
+restoree177746e539c841237ab12289d70ab55.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: restoree177746e539c841237ab12289d70ab55.url(options),
+    method: 'post',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::restore
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:101
+* @route '/admin/kanban/trash/restore'
+*/
+const restoree177746e539c841237ab12289d70ab55Form = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: restoree177746e539c841237ab12289d70ab55.url(options),
+    method: 'post',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::restore
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:101
+* @route '/admin/kanban/trash/restore'
+*/
+restoree177746e539c841237ab12289d70ab55Form.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: restoree177746e539c841237ab12289d70ab55.url(options),
+    method: 'post',
+})
+
+restoree177746e539c841237ab12289d70ab55.form = restoree177746e539c841237ab12289d70ab55Form
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::restore
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:101
+* @route '/admin/tickets/trash/restore'
+*/
+const restored5caab3dd895d84b4e9e025eabbaad8e = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: restored5caab3dd895d84b4e9e025eabbaad8e.url(options),
+    method: 'post',
+})
+
+restored5caab3dd895d84b4e9e025eabbaad8e.definition = {
+    methods: ["post"],
+    url: '/admin/tickets/trash/restore',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::restore
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:101
+* @route '/admin/tickets/trash/restore'
+*/
+restored5caab3dd895d84b4e9e025eabbaad8e.url = (options?: RouteQueryOptions) => {
+    return restored5caab3dd895d84b4e9e025eabbaad8e.definition.url + queryParams(options)
+}
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::restore
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:101
+* @route '/admin/tickets/trash/restore'
+*/
+restored5caab3dd895d84b4e9e025eabbaad8e.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: restored5caab3dd895d84b4e9e025eabbaad8e.url(options),
+    method: 'post',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::restore
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:101
+* @route '/admin/tickets/trash/restore'
+*/
+const restored5caab3dd895d84b4e9e025eabbaad8eForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: restored5caab3dd895d84b4e9e025eabbaad8e.url(options),
+    method: 'post',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::restore
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:101
+* @route '/admin/tickets/trash/restore'
+*/
+restored5caab3dd895d84b4e9e025eabbaad8eForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: restored5caab3dd895d84b4e9e025eabbaad8e.url(options),
+    method: 'post',
+})
+
+restored5caab3dd895d84b4e9e025eabbaad8e.form = restored5caab3dd895d84b4e9e025eabbaad8eForm
 
 /**
 * Multiple routes resolve to \Yuan\AdminCore\Trash\TrashController::restore, so this export is a
@@ -702,6 +974,8 @@ export const restore = {
     '/admin/invoices/trash/restore': restore58238c958c93653b11173d8bdea786f2,
     '/admin/samples/trash/restore': restore1b175b7260a28ef3abf579bd3f9ee191,
     '/admin/sample-admin/trash/restore': restore4b23bc414f616ffac5613a281922ed12,
+    '/admin/kanban/trash/restore': restoree177746e539c841237ab12289d70ab55,
+    '/admin/tickets/trash/restore': restored5caab3dd895d84b4e9e025eabbaad8e,
 }
 
 /**
@@ -1029,6 +1303,136 @@ destroyd672c2dc6817ac78edd433b4b5779b8dForm.delete = (options?: RouteQueryOption
 })
 
 destroyd672c2dc6817ac78edd433b4b5779b8d.form = destroyd672c2dc6817ac78edd433b4b5779b8dForm
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::destroy
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:114
+* @route '/admin/kanban/trash'
+*/
+const destroy0df295d40d2896bf4f6e57ee4ddd32cd = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy0df295d40d2896bf4f6e57ee4ddd32cd.url(options),
+    method: 'delete',
+})
+
+destroy0df295d40d2896bf4f6e57ee4ddd32cd.definition = {
+    methods: ["delete"],
+    url: '/admin/kanban/trash',
+} satisfies RouteDefinition<["delete"]>
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::destroy
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:114
+* @route '/admin/kanban/trash'
+*/
+destroy0df295d40d2896bf4f6e57ee4ddd32cd.url = (options?: RouteQueryOptions) => {
+    return destroy0df295d40d2896bf4f6e57ee4ddd32cd.definition.url + queryParams(options)
+}
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::destroy
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:114
+* @route '/admin/kanban/trash'
+*/
+destroy0df295d40d2896bf4f6e57ee4ddd32cd.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy0df295d40d2896bf4f6e57ee4ddd32cd.url(options),
+    method: 'delete',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::destroy
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:114
+* @route '/admin/kanban/trash'
+*/
+const destroy0df295d40d2896bf4f6e57ee4ddd32cdForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy0df295d40d2896bf4f6e57ee4ddd32cd.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::destroy
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:114
+* @route '/admin/kanban/trash'
+*/
+destroy0df295d40d2896bf4f6e57ee4ddd32cdForm.delete = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy0df295d40d2896bf4f6e57ee4ddd32cd.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy0df295d40d2896bf4f6e57ee4ddd32cd.form = destroy0df295d40d2896bf4f6e57ee4ddd32cdForm
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::destroy
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:114
+* @route '/admin/tickets/trash'
+*/
+const destroy5937c017c784b23c6f4fbb5cf53b4501 = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy5937c017c784b23c6f4fbb5cf53b4501.url(options),
+    method: 'delete',
+})
+
+destroy5937c017c784b23c6f4fbb5cf53b4501.definition = {
+    methods: ["delete"],
+    url: '/admin/tickets/trash',
+} satisfies RouteDefinition<["delete"]>
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::destroy
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:114
+* @route '/admin/tickets/trash'
+*/
+destroy5937c017c784b23c6f4fbb5cf53b4501.url = (options?: RouteQueryOptions) => {
+    return destroy5937c017c784b23c6f4fbb5cf53b4501.definition.url + queryParams(options)
+}
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::destroy
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:114
+* @route '/admin/tickets/trash'
+*/
+destroy5937c017c784b23c6f4fbb5cf53b4501.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy5937c017c784b23c6f4fbb5cf53b4501.url(options),
+    method: 'delete',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::destroy
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:114
+* @route '/admin/tickets/trash'
+*/
+const destroy5937c017c784b23c6f4fbb5cf53b4501Form = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy5937c017c784b23c6f4fbb5cf53b4501.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \Yuan\AdminCore\Trash\TrashController::destroy
+* @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:114
+* @route '/admin/tickets/trash'
+*/
+destroy5937c017c784b23c6f4fbb5cf53b4501Form.delete = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy5937c017c784b23c6f4fbb5cf53b4501.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy5937c017c784b23c6f4fbb5cf53b4501.form = destroy5937c017c784b23c6f4fbb5cf53b4501Form
 
 /**
 * Multiple routes resolve to \Yuan\AdminCore\Trash\TrashController::destroy, so this export is a
@@ -1042,6 +1446,8 @@ export const destroy = {
     '/admin/invoices/trash': destroy64daec36d73148742d93855a9e3b98c3,
     '/admin/samples/trash': destroy4c93005063dbcb63b23c80c16785acdc,
     '/admin/sample-admin/trash': destroyd672c2dc6817ac78edd433b4b5779b8d,
+    '/admin/kanban/trash': destroy0df295d40d2896bf4f6e57ee4ddd32cd,
+    '/admin/tickets/trash': destroy5937c017c784b23c6f4fbb5cf53b4501,
 }
 
 const TrashController = { index, restore, destroy }

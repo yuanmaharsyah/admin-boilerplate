@@ -72,7 +72,7 @@ final readonly class MenuBuilder
                         ? $this->url->route("{$module->slug}.create")
                         : null,
                     badge: $this->translated($module->badge),
-                    children: $this->children($module, $gate),
+                    children: $this->children($module, $module->submenu, $gate),
                 ), $modules),
             );
         }
@@ -81,25 +81,39 @@ final readonly class MenuBuilder
     }
 
     /**
+     * The children the user may open; a parent child (third level) only when
+     * at least one of its links is left.
+     *
+     * @param  list<array{label: string, route: ?string, action: string, badge: ?string, submenu: list<array{label: string, route: string, action: string, badge: ?string, submenu: array{}}>}>|list<array{label: string, route: string, action: string, badge: ?string, submenu: array{}}>  $entries
      * @return list<MenuChildData>
      */
-    private function children(ModuleDefinition $module, Gate $gate): array
+    private function children(ModuleDefinition $module, array $entries, Gate $gate): array
     {
         $children = [];
 
-        foreach ($module->submenu as $child) {
-            $ability = $module->superadminOnly ? 'admin-core.superadmin' : "{$module->slug}.{$child['action']}";
+        foreach ($entries as $entry) {
+            if ($entry['route'] === null) {
+                $links = $this->children($module, $entry['submenu'], $gate);
+
+                if ($links !== []) {
+                    $children[] = new MenuChildData(label: __($entry['label']), href: null, route: null, badge: $this->translated($entry['badge']), children: $links);
+                }
+
+                continue;
+            }
+
+            $ability = $module->superadminOnly ? 'admin-core.superadmin' : "{$module->slug}.{$entry['action']}";
 
             if (! $gate->allows($ability)) {
                 continue;
             }
 
-            $route = "{$module->slug}.{$child['route']}";
+            $route = "{$module->slug}.{$entry['route']}";
             $children[] = new MenuChildData(
-                label: __($child['label']),
+                label: __($entry['label']),
                 href: $this->url->route($route),
                 route: $route,
-                badge: $this->translated($child['badge']),
+                badge: $this->translated($entry['badge']),
             );
         }
 

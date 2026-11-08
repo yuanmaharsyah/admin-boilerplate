@@ -174,6 +174,7 @@ admin-boilerplate/
 | Override a core page | `admin-core.pages.overrides` map: `'Users::Index' => 'App::Users/Index'` |
 | Add shared props | The project's `App\Http\Middleware\HandleInertiaRequests` extends `Yuan\AdminCore\Http\Middleware\HandleInertiaRequests` and merges `parent::share()`; each added prop is a Data object |
 | Turn off a core module | `admin-core.modules.disabled` (list of slugs). Listing a module with `'core' => true` is a boot error |
+| Keep a module out of production | `admin-core.modules.dev_only` (list of slugs, any root; default Komponen and the generator samples): off entirely while `APP_ENV=production`, on everywhere else |
 | Change a core module fundamentally | `php artisan admin:eject Users` copies it into `modules/` and disables the core one. **Warning: that module stops receiving package updates.** |
 
 ---
@@ -232,6 +233,9 @@ return [
     'submenu'         => [              // children under the menu item; each a parameterless GET route of this module
         ['label' => 'Daftar', 'route' => 'index'],                                          // action defaults to view
         ['label' => 'Tambah', 'route' => 'create', 'action' => 'create', 'badge' => 'Baru'], // shown only with invoices.create
+        ['label' => 'Laporan', 'submenu' => [                                                // third level (restyle 03): a parent, no route
+            ['label' => 'Bulanan', 'route' => 'reports.monthly'],
+        ]],
     ],
 ];
 ```
@@ -254,7 +258,7 @@ Menu groups are declared once in `config/admin-core.php`. A module's `group` mus
 - `actions` without `view`.
 - A custom action that isn't a lowercase single word.
 - A widget class that doesn't exist, doesn't extend `Widget`, or has a key not prefixed with the module slug.
-- A `badge` that is empty or longer than 24 characters; a `submenu` child with another key than `label`, `route`, `action`, `badge`, a full route name, or an action the module doesn't declare. The contract test `assertSubmenuRoutes()` adds: the route exists, is GET without parameters and carries `permission:{slug}.{action}` (or `superadmin`).
+- A `badge` that is empty or longer than 24 characters; a `submenu` child with another key than `label`, `route`, `action`, `badge`, a full route name, or an action the module doesn't declare; a parent child (`submenu`) with a `route` or `action`, an empty one, or a fourth level (three levels at most: item → child → link). The contract test `assertSubmenuRoutes()` adds: the route exists, is GET without parameters and carries `permission:{slug}.{action}` (or `superadmin`).
 
 Results are cached with `php artisan modules:cache`, and `optimize` includes it.
 
@@ -483,6 +487,10 @@ Every setting is declared in `admin-core.settings` (core keys, plus any the proj
 - Security headers middleware: CSP report-only by default, HSTS, X-Frame-Options DENY, Referrer-Policy.
 - Every admin route requires auth plus a permission. A contract test fails if any route under `/admin` lacks either.
 - No secrets in seeders; `.env.example` only.
+- **Two-step verification (restyle 03):** Fortify's two-factor authentication (authenticator app + recovery codes, confirmed setup, password confirmation before changes), optional per user; Pengaturan → Keamanan → `wajib_2fa` makes it required. The secret and recovery codes are encrypted, never fillable, never logged (also in `audit.masked_fields`). Audit events `two_factor_enabled`, `two_factor_disabled`, `two_factor_failed`.
+- **Self-registration (restyle 03):** off by default (Pengaturan → Keamanan → `registrasi`); while off, `/register` answers 404. A new account gets `admin-core.auth.register_level` and stays inactive until an admin activates it; event `registered`.
+- **Profile photo:** a private-disk `avatar` attachment of the user (upload and removal audited); it is shown on every page through a signed, hour-stable URL that is not an audited download (it isn't a data access, and logging it would add a row per page view).
+- **Social sign-in:** room only (owner's decision): `admin-core.auth.social` shows Google / GitHub buttons that link nowhere until Socialite is set up in a project.
 
 ---
 
@@ -527,7 +535,7 @@ These turn the AGENTS.md rules into failing tests.
 
 ## 10. Out of Scope (v1)
 
-Multi-tenancy, per-user overrides, data-scope rules (hook only), 2FA, API tokens, notifications center, in-app backups, CI pipeline, i18n beyond `id` + `en`.
+Multi-tenancy, per-user overrides, data-scope rules (hook only), API tokens, social sign-in (buttons only), notifications center, in-app backups, CI pipeline, i18n beyond `id` + `en`.
 
 ## 11. Risks
 

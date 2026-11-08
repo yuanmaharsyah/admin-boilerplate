@@ -89,6 +89,20 @@ issued_on: string,
 status: Modules.Invoice.Enums.InvoiceStatus,
 status_label: string,
 total: number,
+due_at: string | null,
+payment_method_label: string | null,
+notes: string | null,
+};
+export type InvoiceReportData = {
+period: 'monthly' | 'yearly',
+rows: Modules.Invoice.Data.InvoiceReportRowData[],
+};
+export type InvoiceReportRowData = {
+key: string,
+label: string,
+count: number,
+paid: number,
+total: number,
 };
 export type StoreInvoiceData = {
 number: string,
@@ -247,6 +261,145 @@ namespace Enums {
 export type SampleReadonlyStatus = 'baru' | 'lama';
 }
 }
+namespace Task {
+namespace Data {
+export type MoveTasksData = {
+columns: Record<string, number[]>,
+};
+export type StoreTaskData = {
+title: string,
+description: string | null,
+status: Modules.Task.Enums.TaskStatus,
+priority: Modules.Task.Enums.TaskPriority,
+assignee: string | null,
+due_on: string | null,
+position: number,
+};
+export type TaskBoardData = {
+columns: Modules.Task.Data.TaskColumnData[],
+cards: Modules.Task.Data.TaskCardData[],
+move_href: string | null,
+};
+export type TaskCardData = {
+id: number,
+title: string,
+description: string | null,
+priority: Modules.Task.Enums.TaskPriority,
+priority_label: string,
+assignee: string | null,
+due_on: string | null,
+};
+export type TaskColumnData = {
+key: string,
+label: string,
+ids: number[],
+};
+export type TaskData = {
+id: number,
+title: string,
+description: string | null,
+status: Modules.Task.Enums.TaskStatus,
+status_label: string,
+priority: Modules.Task.Enums.TaskPriority,
+priority_label: string,
+assignee: string | null,
+due_on: string | null,
+position: number,
+lock_version: number,
+};
+export type TaskFormOptionsData = {
+status_options: Yuan.AdminCore.Data.OptionData[],
+priority_options: Yuan.AdminCore.Data.OptionData[],
+};
+export type TaskListItemData = {
+id: number,
+title: string,
+status: Modules.Task.Enums.TaskStatus,
+status_label: string,
+priority: Modules.Task.Enums.TaskPriority,
+priority_label: string,
+assignee: string | null,
+due_on: string | null,
+position: number,
+};
+export type UpdateTaskData = {
+title: string,
+description: string | null,
+status: Modules.Task.Enums.TaskStatus,
+priority: Modules.Task.Enums.TaskPriority,
+assignee: string | null,
+due_on: string | null,
+position: number,
+lock_version: number,
+};
+}
+namespace Enums {
+export type TaskPriority = 'rendah' | 'sedang' | 'tinggi';
+export type TaskStatus = 'rencana' | 'dikerjakan' | 'ditinjau' | 'selesai';
+}
+}
+namespace Ticket {
+namespace Data {
+export type StoreTicketData = {
+number: string,
+subject: string,
+requester: string,
+message: string,
+priority: Modules.Ticket.Enums.TicketPriority,
+status: Modules.Ticket.Enums.TicketStatus,
+assignee: string | null,
+};
+export type TicketData = {
+id: number,
+number: string,
+subject: string,
+requester: string,
+message: string,
+priority: Modules.Ticket.Enums.TicketPriority,
+priority_label: string,
+status: Modules.Ticket.Enums.TicketStatus,
+status_label: string,
+assignee: string | null,
+lock_version: number,
+};
+export type TicketFormOptionsData = {
+priority_options: Yuan.AdminCore.Data.OptionData[],
+status_options: Yuan.AdminCore.Data.OptionData[],
+};
+export type TicketListItemData = {
+id: number,
+number: string,
+subject: string,
+requester: string,
+priority: Modules.Ticket.Enums.TicketPriority,
+priority_label: string,
+status: Modules.Ticket.Enums.TicketStatus,
+status_label: string,
+assignee: string | null,
+message: string,
+};
+export type TicketSummaryData = {
+total: number,
+new: number,
+open: number,
+done: number,
+};
+export type UpdateTicketData = {
+number: string,
+subject: string,
+requester: string,
+message: string,
+priority: Modules.Ticket.Enums.TicketPriority,
+status: Modules.Ticket.Enums.TicketStatus,
+assignee: string | null,
+lock_version: number,
+};
+}
+namespace Enums {
+export type TicketPriority = 'rendah' | 'sedang' | 'tinggi' | 'darurat';
+export type TicketStatus = 'baru' | 'dibuka' | 'menunggu' | 'selesai';
+}
+}
 }
 declare namespace Spatie {
 namespace LaravelData {
@@ -258,7 +411,7 @@ declare namespace Yuan {
 namespace AdminCore {
 namespace Audit {
 export type AuditCategory = 'created' | 'updated' | 'deleted' | 'auth' | 'other';
-export type AuditEvent = 'created' | 'updated' | 'deleted' | 'restored' | 'force_deleted' | 'exported' | 'attachment_uploaded' | 'attachment_downloaded' | 'attachment_deleted' | 'login' | 'logout' | 'login_failed' | 'login_locked' | 'password_changed' | 'password_reset' | 'level_changed' | 'user_activated' | 'user_deactivated' | 'permissions_updated' | 'settings_updated' | 'audit_pruned' | 'attachments_swept';
+export type AuditEvent = 'created' | 'updated' | 'deleted' | 'restored' | 'force_deleted' | 'exported' | 'attachment_uploaded' | 'attachment_downloaded' | 'attachment_deleted' | 'login' | 'logout' | 'login_failed' | 'login_locked' | 'password_changed' | 'password_reset' | 'level_changed' | 'user_activated' | 'user_deactivated' | 'permissions_updated' | 'settings_updated' | 'audit_pruned' | 'attachments_swept' | 'two_factor_enabled' | 'two_factor_disabled' | 'two_factor_failed' | 'registered';
 }
 namespace Dashboard {
 export type WidgetSize = 'sm' | 'md' | 'lg' | 'full';
@@ -370,9 +523,10 @@ items: Yuan.AdminCore.Data.OptionData[],
 };
 export type MenuChildData = {
 label: string,
-href: string,
-route: string,
+href: string | null,
+route: string | null,
 badge: string | null,
+children: Yuan.AdminCore.Data.MenuChildData[],
 };
 export type MenuGroupData = {
 key: string,
@@ -454,8 +608,18 @@ export type UserData = {
 id: number,
 name: string,
 email: string,
+avatar_url: string | null,
 };
 namespace Account {
+export type AccountPageData = {
+profile: Yuan.AdminCore.Data.Account.ProfileData,
+tab: 'profil' | 'notifikasi' | 'keamanan',
+password_submit_href: string,
+password_hint: string,
+two_factor: Yuan.AdminCore.Data.Account.TwoFactorData | null,
+sessions: Yuan.AdminCore.Data.Account.SessionData[] | null,
+sign_out_others_href: string,
+};
 export type ProfileData = {
 name: string,
 email: string,
@@ -464,6 +628,34 @@ level_label: string | null,
 lock_version: number,
 submit_href: string,
 password_href: string,
+avatar_url: string | null,
+avatar_submit_href: string,
+avatar_destroy_href: string | null,
+};
+export type SessionData = {
+agent: string,
+ip: string | null,
+last_active: string,
+current: boolean,
+};
+export type SignOutSessionsData = {
+password: string,
+};
+export type TwoFactorData = {
+state: 'off' | 'pending' | 'on',
+required: boolean,
+enable_href: string,
+confirm_href: string,
+disable_href: string,
+qr_href: string,
+secret_href: string,
+recovery_href: string,
+regenerate_href: string,
+confirm_status_href: string,
+confirm_password_href: string,
+};
+export type UpdateAvatarData = {
+avatar: undefined,
 };
 export type UpdateProfileData = {
 name: string,
@@ -525,6 +717,9 @@ user_name: string,
 level_label: string | null,
 password_hint: string,
 };
+export type ConfirmPasswordPageData = {
+submit_href: string,
+};
 export type ForgotPasswordPageData = {
 submit_href: string,
 login_href: string,
@@ -535,6 +730,20 @@ export type LoginPageData = {
 submit_href: string,
 forgot_href: string | null,
 status: string | null,
+social: ('google' | 'github')[],
+register_href: string | null,
+};
+export type RegisterData = {
+name: string,
+username: string,
+email: string,
+password: string,
+};
+export type RegisterPageData = {
+submit_href: string,
+login_href: string,
+password_hint: string,
+social: ('google' | 'github')[],
 };
 export type ResetPasswordData = {
 password: string,
@@ -547,6 +756,10 @@ email: string,
 token: string,
 token_valid: boolean,
 password_hint: string,
+};
+export type TwoFactorChallengePageData = {
+submit_href: string,
+login_href: string,
 };
 export type UpdatePasswordData = {
 current_password: string,

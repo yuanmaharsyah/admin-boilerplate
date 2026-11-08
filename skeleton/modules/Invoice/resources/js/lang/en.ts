@@ -2,6 +2,16 @@ import type { id } from './id';
 
 /* English fallback; tsc fails on a missing or an extra key. */
 export const en: Record<keyof typeof id, string> = {
+    'invoices.report_monthly': 'Monthly report',
+    'invoices.report_yearly': 'Yearly report',
+    'invoices.report_description':
+        'Invoice count and totals per period that you may see.',
+    'invoices.report_chart': 'Total per period',
+    'invoices.report_period': 'Period',
+    'invoices.report_count': 'Count',
+    'invoices.report_paid': 'Paid',
+    'invoices.report_total': 'Total',
+    'invoices.report_unit': 'million Rupiah',
     'invoices.title': 'Invoices',
     'invoices.description': 'Bills to customers.',
     'invoices.list': 'Invoice list',

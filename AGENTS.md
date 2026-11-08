@@ -63,6 +63,7 @@ Tasks outside the roadmap (bug fixes, small features) follow the same steps, exc
 - A module may use another module's **Models** only. Shared logic goes into the core package.
 - Inertia page names are `{Name}::{Page}`.
 - Projects never edit `vendor/`. They customize through the extension points (spec §2.2) or by ejecting, with the reason recorded.
+- **Development-only modules** (developer tools, catalogues, samples, debug pages) go in `admin-core.modules.dev_only`: they're on locally and on staging, and switched off completely when `APP_ENV=production` (no menu, routes, widgets or permissions). Never hide a page from production by other means (an `if` in the menu, a commented-out route). Demo modules are different: `admin:remove-demo` deletes them from a real project.
 
 ## 4. RBAC (hard)
 
@@ -118,7 +119,7 @@ Tasks outside the roadmap (bug fixes, small features) follow the same steps, exc
   - `UnsavedChangesGuard` on edit forms.
   - `StaleUpdateDialog` handles 409.
 - Formatting only through `lib/format.ts` (id-ID). User strings through the translation helper, Bahasa Indonesia default.
-- Theme tokens only (no hex colors, no inline styles). Works in light and dark mode, at 375px, and keyboard-only.
+- Theme tokens only (no hex colors, no inline styles; the one exception is the drag position dnd-kit sets while a row, column or card is dragged, through `dragStyle()` in `DataTableParts.tsx`). Works in light and dark mode, at 375px, and keyboard-only.
 - **Screens are built from the UI sources** (priority order above), following the conversion rules in frontend-behavior spec §1:
   - Approved mockup → map `data-component` to `@admin-core` components and colors to theme tokens.
   - Reference design → adapt its layout, spacing and type into `@admin-core` components; map every colour to a theme token.

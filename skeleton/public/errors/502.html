@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Layanan sedang tidak tersedia</title>
+<!--
+  Served by the web server (Nginx `error_page 502 504 /errors/502.html;`)
+  while PHP is down, so it can't use the app's CSS or JS: the values below
+  copy the theme tokens of admin-core.css (light and dark). Keep it in step
+  with Core::Errors/Show (ErrorPanel).
+-->
+<style>
+  :root { color-scheme: light dark; --bg: oklch(1 0 0); --card: oklch(1 0 0); --fg: oklch(0.145 0 0); --muted: oklch(0.97 0 0); --muted-fg: oklch(0.556 0 0); --border: oklch(0.922 0 0); --primary: oklch(0.205 0 0); --primary-fg: oklch(0.985 0 0); }
+  @media (prefers-color-scheme: dark) { :root { --bg: oklch(0.145 0 0); --card: oklch(0.205 0 0); --fg: oklch(0.985 0 0); --muted: oklch(0.269 0 0); --muted-fg: oklch(0.708 0 0); --border: oklch(1 0 0 / 10%); --primary: oklch(0.922 0 0); --primary-fg: oklch(0.205 0 0); } }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 32px 16px; background: var(--bg); color: var(--fg); font: 14px/1.5 "Geist", Inter, system-ui, sans-serif; }
+  main { width: 100%; max-width: 32rem; padding: 40px 24px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .icon { width: 80px; height: 80px; border-radius: 999px; background: var(--muted); display: flex; align-items: center; justify-content: center; }
+  .icon span { width: 48px; height: 48px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); display: flex; align-items: center; justify-content: center; }
+  .code { font-size: 72px; line-height: 1; font-weight: 600; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; }
+  h1 { margin: 0; font-size: 24px; line-height: 1.33; font-weight: 600; }
+  p { margin: 8px 0 0; color: var(--muted-fg); max-width: 24rem; }
+  button { height: 40px; padding: 0 24px; border: 0; border-radius: 8px; background: var(--primary); color: var(--primary-fg); font: inherit; font-weight: 600; cursor: pointer; }
+  button:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="icon" aria-hidden="true"><span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10H6"/><path d="M6 6H6"/><path d="M18 6H18"/><path d="M18 10H18"/><rect width="20" height="8" x="2" y="2" rx="2"/><path d="M2 18h20"/><path d="m4 14 2 4"/><path d="m20 14-2 4"/></svg></span></div>
+  <div class="code">502</div>
+  <div>
+    <h1>Layanan sedang tidak tersedia</h1>
+    <p>Server aplikasi tidak menjawab. Biasanya ini hanya sebentar; coba muat ulang halaman dalam beberapa saat.</p>
+  </div>
+  <button type="button" onclick="location.reload()">Muat ulang</button>
+</main>
+</body>
+</html>

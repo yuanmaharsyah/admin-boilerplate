@@ -44,6 +44,8 @@ it('lists everything on a dry run and changes nothing', function (): void {
         ->and(Artisan::output())->toContain(
             'modules/Invoice',
             'modules/SampleAdmin',
+            'modules/Task',
+            'modules/Ticket',
             'tests/Feature/GoldenModulesTest.php',
             'sample:regenerate',
             'invoices.*',

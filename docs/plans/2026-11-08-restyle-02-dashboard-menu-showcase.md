@@ -1,6 +1,6 @@
 # Restyle 02 — Dashboard widgets, nested menu with badges, component showcase
 
-**Status:** ✅ approved 2026-11-08 (defaults of the open questions accepted); in progress
+**Status:** ✅ done; approved in the owner's browser review 2026-11-08
 **Follows:** `2026-11-08-restyle-shell-beranda.md` (restyle 01, waiting for the owner's browser review)
 **Visual target:** the shadcnspace dashboard demo, as in restyle 01: measured values and layout only, no code, illustrations or content.
 
@@ -135,7 +135,7 @@ A (menu) → B (widgets + Beranda) → C (showcase + docs). Each part ends with 
 - [x] B: widget types + Beranda
 - [x] C: showcase + docs rules
 - [x] `composer check` green
-- [ ] Owner's browser review
+- [x] Owner's browser review (2026-11-08)
 
 ## Added during implementation (owner's requests, 2026-11-08)
 - **D. DataTable in the demo's product-list look** with the rows' staggered fade-up (measured on the demo: 20px, ~500 ms ease-out, 250 ms apart). Pure CSS (`data-rows-in`), capped after row 8.

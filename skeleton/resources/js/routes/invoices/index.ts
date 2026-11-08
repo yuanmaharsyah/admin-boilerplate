@@ -1,6 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 import trash067cdb from './trash'
 import attachments from './attachments'
+import reports from './reports'
 /**
 * @see \Yuan\AdminCore\Trash\TrashController::trash
 * @see vendor/yuanmaharsyah/admin-core/src/Trash/TrashController.php:60
@@ -817,6 +818,7 @@ const invoices = {
     trash: Object.assign(trash, trash067cdb),
     attachments: Object.assign(attachments, attachments),
     index: Object.assign(index, index),
+    reports: Object.assign(reports, reports),
     download: Object.assign(download, download),
     create: Object.assign(create, create),
     store: Object.assign(store, store),

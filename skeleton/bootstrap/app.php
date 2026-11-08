@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Yuan\AdminCore\Http\ErrorPages;
 use Yuan\AdminCore\Http\Middleware\EnsureUserIsActive;
 use Yuan\AdminCore\Http\Middleware\RequirePasswordChange;
+use Yuan\AdminCore\Http\Middleware\RequireTwoFactor;
 use Yuan\AdminCore\Http\Middleware\SiteAccess;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -26,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             EnsureUserIsActive::class,
             RequirePasswordChange::class,
+            RequireTwoFactor::class,
             HandleAppearance::class,
             HandleInertiaRequests::class,
             SiteAccess::class,

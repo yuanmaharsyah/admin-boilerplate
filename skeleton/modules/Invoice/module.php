@@ -41,9 +41,14 @@ return [
         MonthlyInvoices::class,
         TopCustomers::class,
     ],
-    // Example of a menu parent with children and badges (spec §3.1).
+    // Example of a menu parent with children, badges and a third level (spec §3.1).
     'submenu' => [
         ['label' => 'Daftar invoice', 'route' => 'index'],
         ['label' => 'Buat invoice', 'route' => 'create', 'action' => 'create', 'badge' => 'Baru'],
+        // A third level (spec §3.1): a parent child without a route.
+        ['label' => 'Laporan', 'submenu' => [
+            ['label' => 'Bulanan', 'route' => 'reports.monthly'],
+            ['label' => 'Tahunan', 'route' => 'reports.yearly'],
+        ]],
     ],
 ];

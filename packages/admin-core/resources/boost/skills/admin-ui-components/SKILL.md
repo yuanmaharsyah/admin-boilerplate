@@ -5,7 +5,7 @@ description: "Use before building or changing any admin screen or UI component: 
 
 # House-style UI components
 
-The admin panel has one look (shadcn/ui neutral, 8px controls, 12px cards, 1px borders, no card shadows). It is inspired by the public shadcnspace dashboard demo, but none of its code, markup or assets is used: match the look with the components below and the theme tokens. Signed in as Super Admin, **Komponen** (`/admin/components`) shows every entry live with code to copy.
+The admin panel has one look (shadcn/ui neutral, 8px controls, 12px cards, 1px borders, no card shadows). It is inspired by the public shadcnspace dashboard demo, but none of its code, markup or assets is used: match the look with the components below and the theme tokens. Signed in as Super Admin, **Komponen** (`/admin/components`) shows every entry live with code to copy (locally and on staging; it is in `admin-core.modules.dev_only`, so production doesn't have it).
 
 Rules:
 
@@ -30,7 +30,10 @@ Rules:
 - `<PageHeader title description actions backHref />`: breadcrumbs (from the page prop) above the title; no rule under it.
 - Cards: `rounded-xl border border-border bg-card p-6`. A card title is `<CardHeading title subtitle action />` (18px/500, muted subtitle, action on the right).
 - `<EmptyState icon title description action />` for an empty list, tab or Beranda.
-- `<Tabs label tabs value onChange />` for the sections of a Show page.
+- `<Tabs label tabs value onChange variant />`: `underline` for the sections of a Show page, `segmented` (tabs with `icon`) for settings pages (Akun, Pengaturan).
+- `Switch` (`@admin-core/components/ui/switch`): a bare switch; in a form use `SwitchField`.
+- `<ErrorPanel icon code title text actions />`: the body of an error or site-access page (status icon in a soft circle, large code, actions).
+- Auth pages: `<AuthCard title description onSubmit />` inside the split `AuthLayout` (the right half is `AuthShowcase`); `<AuthSocial providers />` for the reserved Google / GitHub buttons.
 
 ## Lists: `DataTable`
 
@@ -38,9 +41,11 @@ Rules:
 
 Rows fade up one after another when they mount (a new page, a new search): 20px, 500 ms ease-out, 250 ms apart. That is the `data-rows-in` attribute on the `tbody`, styled in `admin-core.css`. To get it in another table, put `data-rows-in` on its `tbody`; never add your own row animation.
 
+Optional: `expandable` (details panel under a row), `stickyHeader`, `stickyFirstColumn`, `reorderColumns` (drag or keyboard, kept per user), `onReorder` (rows of a model with a position; your module's `PATCH` route), and per column `edit: { type: 'text' | 'number' | 'select', options, value, save }` for inline editing (click or Enter, Esc cancels; `save` calls the module's update route with `lock_version`, then `done(true | false)`). Drag and drop is `@dnd-kit` (keyboard: Space, arrows, Space).
+
 ## Forms
 
-Every control sits in `FormField` (label, help, error, required): `TextField`, `TextareaField`, `SelectField`, `ComboboxField`, `RelationSelect`, `DateField`, `NumberField`, `CurrencyField`, `SwitchField`, `FileField`. Pages use `useAdminForm`, `<FormFooter />`, `<UnsavedChangesGuard />` and `<StaleUpdateDialog />` (R19).
+Every control sits in `FormField` (label, help, error, required). Uploads: `FileField` / `AttachmentFields` (a drop zone per slot; picked images show thumbnails before upload), `ImageField` (one image with Unggah / Reset, `round` for avatars). Other controls: `TextField`, `TextareaField`, `SelectField`, `ComboboxField`, `RelationSelect`, `DateField`, `NumberField`, `CurrencyField`, `SwitchField`, `FileField`. Pages use `useAdminForm`, `<FormFooter />`, `<UnsavedChangesGuard />` and `<StaleUpdateDialog />` (R19).
 
 ## Dashboard and summaries
 
@@ -50,9 +55,14 @@ Every control sits in `FormField` (label, help, error, required): `TextField`, `
 - `<DonutCard title value format change caption segments onSelect action />`: a ring with a legend.
 - `<ListCard title rows empty action />`: rows of icon, title, subtitle, value (`tone`), an optional change pill and a share bar (`progress`, 0 to 1).
 - `StatStack`, `SegmentBar`, `WidgetTable` for the older summary types.
+- The chart list (`@admin-core/components/admin/ChartCards`): `<LineChartCard />`, `<StackedBarChartCard />`, `<HorizontalBarChartCard />`, `<PieChartCard inner />`, `<RadialChartCard />`, `<RadarChartCard />`, each with `title subtitle rows series action` (rows `{ label, ...numbers }`, series `{ key, label }`).
+
+## Boards
+
+`<KanbanBoard label columns items cardLabel renderCard onMove />`: one column per status (`{ key, label, ids }`), cards by id. Cards move by dragging, with the keyboard inside a column, and through each card's "Pindahkan ke" menu (the keyboard and single-pointer way). `onMove(columns, done)` sends every column's ids to the module's `PATCH` route (`edit` permission, audited batch); `done(false)` puts the cards back.
 
 On Beranda these come from widgets (skill `admin-dashboard-widget`); pages outside Beranda use the components directly.
 
 ## Menu
 
-The menu is never written in TSX: it comes from `module.php`. `'badge' => 'Baru'` puts a pill on the module's item; `'submenu' => [['label' => 'Daftar', 'route' => 'index'], ['label' => 'Tambah', 'route' => 'create', 'action' => 'create', 'badge' => 'Baru']]` makes the item a parent with children (each a parameterless GET route of the module, shown only with `{slug}.{action}`).
+The menu is never written in TSX: it comes from `module.php`. `'badge' => 'Baru'` puts a pill on the module's item; `'submenu' => [['label' => 'Daftar', 'route' => 'index'], ['label' => 'Tambah', 'route' => 'create', 'action' => 'create', 'badge' => 'Baru']]` makes the item a parent with children (each a parameterless GET route of the module, shown only with `{slug}.{action}`). A child can be a parent too, for a third level: `['label' => 'Laporan', 'submenu' => [['label' => 'Bulanan', 'route' => 'reports.monthly']]]` (no `route` on the parent; three levels at most).

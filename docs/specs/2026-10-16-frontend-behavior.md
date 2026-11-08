@@ -41,7 +41,7 @@
 - **Long menus:** the sections scroll vertically; the app mark and the user block stay fixed.
 - **Below 1024px:** the sidebar is hidden. The topbar menu button opens it (expanded, 44px items) in a sheet, which closes on navigation.
 - **Search:** the topbar search field and `Ctrl+K` open the command palette.
-- **Submenu (restyle 02):** an item with `children` is a disclosure (chevron, `aria-expanded`); its children sit under a guide line and animate open (200 ms). The parent of the current route starts open; the child whose `route` equals `app.route` gets `aria-current="page"`. Collapsed sidebar: the parent icon opens its children in a menu to the right. The palette lists each child as "Item › Child".
+- **Submenu (restyle 02):** an item with `children` is a disclosure (chevron, `aria-expanded`); its children sit under a guide line and animate open (200 ms). The parent of the current route starts open; the child whose `route` equals `app.route` gets `aria-current="page"`. Collapsed sidebar: the parent icon opens its children in a menu to the right. A child with its own children (third level) is a nested disclosure under a further guide line, open when it holds the current route; in the collapsed flyout it is a sub-menu. The palette lists each link as "Item › Child" or "Item › Child › Link".
 - **Badges:** `badge` on an item or child renders a round pill (`Badge`) after the label.
 - **Breadcrumbs:** come from the `breadcrumbs` page prop (a Data array) and render in `PageHeader` above the title (≥1024px); there is no client-side derivation.
 - **Downloads badge:** shows `downloads.ready_count`. It refreshes on each Inertia visit and every 30s with a partial reload of `downloads` only while the tab is visible.
@@ -61,6 +61,7 @@
 
 ## 5. DataTable
 
+- **Features (restyle 03), all opt-in per list:** `expandable` (chevron column, a muted details panel under the row, several may be open); `stickyHeader` (the table box scrolls, max 70dvh, the header stays); `stickyFirstColumn`; `reorderColumns` (drag a header's grip, or focus it and use Space / arrows / Space; the order is kept per user next to the column choice); `onReorder` (rows by their grip, same keys; the page's new order goes to the module's `PATCH` route, put back on failure); inline editing per column (click or Enter opens the field, Enter or blur saves through the module's update route with `lock_version`, Esc cancels, a 409 shows the stale dialog).
 - **Look and motion (restyle 02):** the list sits in a card with the toolbar; the table in a bordered 12px box; header 16px/600 in the foreground colour (sort icon shows on hover until a sort is active); rows 56px with a 1px divider and a soft hover. Data rows fade up when they mount (a new page, search, filter): 20px, 500 ms ease-out, 250 ms apart, rows after the 8th share the last delay (`data-rows-in`). Skeleton rows don't animate; reduced motion turns it off.
 
 - **State lives in the URL query:** `search`, `filter[key]`, `sort` (`col` or `-col`), `page`, `per_page` (10/25/50/100, default 25).

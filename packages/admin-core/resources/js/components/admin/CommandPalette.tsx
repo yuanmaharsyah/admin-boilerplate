@@ -29,13 +29,32 @@ export function CommandPalette({ open, onOpenChange, menu }: Props) {
     const items = menu.flatMap((group) =>
         group.items.flatMap((item) => [
             { ...item, group: group.label },
-            ...item.children.map((child) => ({
-                ...item,
-                label: `${item.label} › ${child.label}`,
-                href: child.href,
-                create_href: null,
-                group: group.label,
-            })),
+            ...item.children.flatMap((child) =>
+                (child.href === null
+                    ? child.children.map((link) => ({
+                          label: `${item.label} › ${child.label} › ${link.label}`,
+                          href: link.href,
+                      }))
+                    : [
+                          {
+                              label: `${item.label} › ${child.label}`,
+                              href: child.href,
+                          },
+                      ]
+                ).flatMap(({ label, href }) =>
+                    href === null
+                        ? []
+                        : [
+                              {
+                                  ...item,
+                                  label,
+                                  href,
+                                  create_href: null,
+                                  group: group.label,
+                              },
+                          ],
+                ),
+            ),
         ]),
     );
     const actions = items.filter(

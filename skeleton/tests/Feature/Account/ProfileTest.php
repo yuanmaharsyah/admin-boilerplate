@@ -26,10 +26,11 @@ it('shows the profile with the username and level read-only', function (): void 
     $user->assignLevel(Level::query()->create(['name' => 'staf', 'label' => 'Staf']));
 
     AssertableInertia::fromTestResponse(actingAs($user)->get(route('account.profile.edit'))->assertOk())
-        ->component('Core::Account/Profile')
-        ->where('profile.username', 'andi.w')
-        ->where('profile.level_label', 'Staf')
-        ->where('profile.submit_href', route('account.profile.update'));
+        ->component('Core::Account/Settings')
+        ->where('account.tab', 'profil')
+        ->where('account.profile.username', 'andi.w')
+        ->where('account.profile.level_label', 'Staf')
+        ->where('account.profile.submit_href', route('account.profile.update'));
 });
 
 it('saves the name and email, audited, and keeps the username and level', function (): void {

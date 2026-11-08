@@ -21,7 +21,7 @@ use Yuan\AdminCore\Registry\ModuleRegistry;
 final class RemoveDemoCommand extends Command
 {
     /** The demo modules and the generator's golden modules. */
-    public const array MODULES = ['Invoice', 'Customer', 'Sample', 'SampleReadonly', 'SampleAdmin'];
+    public const array MODULES = ['Invoice', 'Customer', 'Task', 'Ticket', 'Sample', 'SampleReadonly', 'SampleAdmin'];
 
     /**
      * Skeleton files that exist only for those modules or for the boilerplate
@@ -40,6 +40,9 @@ final class RemoveDemoCommand extends Command
         'tests/Browser/ShellSmokeTest.php',
         'tests/Browser/FormsTest.php',
         'tests/Browser/DataTableColumnsTest.php',
+        'tests/Browser/DataTableMotionTest.php',
+        'tests/Browser/DataTableFeaturesTest.php',
+        'tests/Browser/KanbanBoardTest.php',
         'tests/Fixtures/GoldenModules.php',
         'tests/Fixtures/regenerate-sample.php',
         'tests/Fixtures/FailingExport.php',

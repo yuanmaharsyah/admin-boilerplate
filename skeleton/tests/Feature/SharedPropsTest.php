@@ -29,7 +29,7 @@ it('shares the core props on a page, with the level and its permissions', functi
     $user->assignLevel($operator = Level::query()->where('name', 'operator')->sole());
 
     AssertableInertia::fromTestResponse(actingAs($user)->get(route('account.profile.edit')))
-        ->where('auth.user', ['id' => $user->id, 'name' => $user->name, 'email' => $user->email])
+        ->where('auth.user', ['id' => $user->id, 'name' => $user->name, 'email' => $user->email, 'avatar_url' => null])
         ->where('auth.level', ['id' => $operator->id, 'name' => 'operator', 'label' => 'Operator'])
         ->where('auth.permissions', $operator->permissions()->orderBy('name')->pluck('name')->all())
         ->where('auth.is_super_admin', false)

@@ -269,3 +269,13 @@
         animation-delay: 1750ms;
     }
 }
+
+/* The auth showcase's soft grid (AuthShowcase), from the border token. */
+@layer components {
+    .auth-grid {
+        background-image:
+            linear-gradient(to right, var(--border) 1px, transparent 1px),
+            linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+        background-size: 48px 48px;
+    }
+}

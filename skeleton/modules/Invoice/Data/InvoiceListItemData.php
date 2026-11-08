@@ -20,6 +20,10 @@ final class InvoiceListItemData extends Data
         public InvoiceStatus $status,
         public string $status_label,
         public int $total,
+        // Shown in the row's details panel (DataTable `expandable`).
+        public ?string $due_at = null,
+        public ?string $payment_method_label = null,
+        public ?string $notes = null,
     ) {}
 
     public static function fromModel(Invoice $invoice): self
@@ -32,6 +36,9 @@ final class InvoiceListItemData extends Data
             status: $invoice->status,
             status_label: $invoice->status->label(),
             total: $invoice->total,
+            due_at: $invoice->due_at?->toDateString(),
+            payment_method_label: $invoice->payment_method?->label(),
+            notes: $invoice->notes,
         );
     }
 }
