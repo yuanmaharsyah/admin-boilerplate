@@ -111,6 +111,8 @@ Tasks outside the roadmap (bug fixes, small features) follow the same steps, exc
 - TS strict, no `any`, no `@ts-ignore`. Types come from `generated.d.ts`. **Never hand-write prop types that a Data class can generate.**
 - URLs and route names only through Wayfinder helpers. Never hardcode a URL string.
 - Use `@admin-core` components and shadcn primitives. A new generic component goes into the core package.
+- **House style (shadcnspace-inspired):** before building any UI, read the Boost skill `admin-ui-components` (`packages/admin-core/resources/boost/skills/admin-ui-components/SKILL.md`), the catalogue of every component, also live at `/admin/components` (Komponen, Super Admin). Reuse what is there. A new generic component goes into the core package **and** onto both the Komponen page and that skill in the same change. Match the look with our tokens and components; never copy shadcnspace / WrapPixel source, markup, illustrations or assets.
+- Motion only through what exists: list rows fade up via `data-rows-in` on the `tbody` (`DataTable` does it), colour transitions, the sidebar width, `tw-animate-css` in dialogs and menus, chart animations. Reduced motion turns all of it off. No new animation library.
 - Forms:
   - Inertia `useForm` + `FormField`.
   - `UnsavedChangesGuard` on edit forms.
@@ -123,7 +125,7 @@ Tasks outside the roadmap (bug fixes, small features) follow the same steps, exc
   - No design file → derived from the closest design plus ui-design.md; owner's browser review at the end of the phase.
   - Behaviour comes from the frontend-behavior spec.
 - Generated modules have no mockup; they follow the stubs, which are built from the `pattern-*` designs.
-- Never copy hex colors, arbitrary `var(--…)` classes, sample data, or mockup/reference demo JS and its libraries into code. No hex values in components.
+- Never copy hex colors, arbitrary `var(--…)` classes, sample data, or mockup/reference demo JS and its libraries into code. No hex values in components. (The Komponen page's examples are documentation fixtures, the one place fixed sample values are allowed.)
 
 ## 7. Packages & Generated Files
 

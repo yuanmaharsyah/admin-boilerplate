@@ -227,6 +227,12 @@ return [
     'menu'            => true,
     'actions'         => ['view', 'create', 'edit', 'delete', 'download'],
     'widgets'         => [],            // Widget class names (§7.2); may be empty
+    // Optional (restyle 02):
+    'badge'           => 'Baru',        // pill next to the menu item, ≤ 24 characters; omitted or null = none
+    'submenu'         => [              // children under the menu item; each a parameterless GET route of this module
+        ['label' => 'Daftar', 'route' => 'index'],                                          // action defaults to view
+        ['label' => 'Tambah', 'route' => 'create', 'action' => 'create', 'badge' => 'Baru'], // shown only with invoices.create
+    ],
 ];
 ```
 
@@ -248,6 +254,7 @@ Menu groups are declared once in `config/admin-core.php`. A module's `group` mus
 - `actions` without `view`.
 - A custom action that isn't a lowercase single word.
 - A widget class that doesn't exist, doesn't extend `Widget`, or has a key not prefixed with the module slug.
+- A `badge` that is empty or longer than 24 characters; a `submenu` child with another key than `label`, `route`, `action`, `badge`, a full route name, or an action the module doesn't declare. The contract test `assertSubmenuRoutes()` adds: the route exists, is GET without parameters and carries `permission:{slug}.{action}` (or `superadmin`).
 
 Results are cached with `php artisan modules:cache`, and `optimize` includes it.
 
@@ -425,7 +432,8 @@ Any other event name is rejected with an exception. A custom action event is onl
 |---|---|---|
 | `key()` | — (required) | `{slug}.{name}`, globally unique |
 | `label()` | — | Card title (translation key allowed) |
-| `type()` | — | `WidgetType`: `stat`, `stat_stack`, `segment`, `bar_chart`, `table` (max 5 rows) |
+| `type()` | — | `WidgetType`: `stat` (optional `change` %, `caption`), `stat_stack`, `segment`, `bar_chart` (optional `negative` series below zero, `compare` series beside, `summary` side panel), `table` (max 5 rows), `area_chart`, `donut` (max 5 segments), `list` (max 6 rows: icon, title, subtitle, value, tone, `change`, `progress`) |
+| `highlight()` | false | A `stat` shown as a large figure inside Beranda's welcome card (two at most) instead of its own card |
 | `size()` | `sm` | `WidgetSize`: `sm` = 3 of 12 columns, `md` = 6, `lg` = 9, `full` = 12. `tall()` spans 2 rows |
 | `order()` | 100 | Sort order on the page |
 | `permission()` | `{slug}.view` | The widget is omitted entirely (not just hidden) without it |
@@ -437,7 +445,7 @@ Any other event name is rejected with an exception. A custom action event is onl
 
 - **Loading:** the page sends the widget list first (metadata only). Each widget's data is its own Inertia deferred prop in its own group, `Inertia::defer(fn, group: 'widget_{key}', rescue: true)`, so widgets load in parallel and independently.
 - **Failure isolation:** `rescue: true` makes Inertia catch an exception inside `data()`, report it (Sentry), and leave only that prop out. That card alone renders the `<Deferred>` `rescue` slot: "Gagal memuat" with a retry (`router.reload({ only: ['widget_{key}'] })`). There is no custom failure shape.
-- **Limits:** at most 12 widgets on a page (config). Each widget should resolve in under 300ms on realistic data, and a test helper measures this.
+- **Limits:** at most 16 cards on a page (config `admin-core.dashboard.max_widgets`; highlights don't count). **Change figures** compare the range with the one of the same length before it: `DashboardRange::previous()`, `DashboardRange::change($current, $previous)` (percent, one decimal; null without a previous value). Each widget should resolve in under 300ms on realistic data, and a test helper measures this.
 - **Core widgets:**
 
   | Key | Type | Size | Permission |

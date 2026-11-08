@@ -79,6 +79,7 @@ export function AdminLayout({
         appName: app.name,
         logo: app.logo,
         activeSlug: active.item?.slug,
+        activeRoute: app.route,
         auth,
         profile: links.profile,
     };

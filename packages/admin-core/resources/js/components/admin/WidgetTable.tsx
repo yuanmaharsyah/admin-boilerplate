@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useT } from '../../lib/i18n';
 
 type Props = {
@@ -64,8 +64,29 @@ export function WidgetTable({ title, columns, rows, href, empty }: Props) {
     );
 }
 
-/** "Lihat semua →" in a widget card: a small outline button. */
-export function SeeAll({ href, label }: { href: string; label: string }) {
+/** "Lihat semua →" in a widget card: a small outline button, or (`compact`) a round icon button for narrow cards. */
+export function SeeAll({
+    href,
+    label,
+    compact = false,
+}: {
+    href: string;
+    label: string;
+    compact?: boolean;
+}) {
+    if (compact) {
+        return (
+            <Link
+                href={href}
+                aria-label={label}
+                title={label}
+                className="flex size-control shrink-0 items-center justify-center rounded-full border border-input bg-background transition-colors duration-150 hover:bg-accent dark:bg-input/30 dark:hover:bg-input/50"
+            >
+                <ArrowUpRight aria-hidden="true" className="size-4" />
+            </Link>
+        );
+    }
+
     return (
         <Link
             href={href}

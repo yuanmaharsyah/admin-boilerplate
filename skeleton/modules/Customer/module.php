@@ -17,4 +17,6 @@ return [
     'menu' => true,
     'actions' => ['view', 'delete'],
     'widgets' => [],
+    // Example of a menu item badge (spec §3.1).
+    'badge' => 'Baru',
 ];

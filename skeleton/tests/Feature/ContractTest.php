@@ -25,6 +25,10 @@ it('protects every admin route with auth and a permission', function (): void {
     ContractAssertions::assertAdminRoutesProtected();
 });
 
+it('points every submenu child at a parameterless GET route with its permission', function (): void {
+    ContractAssertions::assertSubmenuRoutes();
+});
+
 it('has a policy method for every declared action', function (): void {
     ContractAssertions::assertPolicyCoverage();
 });

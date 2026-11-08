@@ -127,7 +127,7 @@ return [
 
     // Beranda (spec §7.2): at most this many widgets on the page.
     'dashboard' => [
-        'max_widgets' => 12,
+        'max_widgets' => 16,
     ],
 
     'branding' => [

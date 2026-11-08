@@ -279,6 +279,7 @@ export const id = {
         'Server tidak merespons. Periksa koneksi lalu coba lagi.',
     'widgets.see_all': 'Lihat semua',
     'widgets.failed': 'Gagal memuat',
+    'widgets.full_report': 'Lihat laporan lengkap',
     'widgets.retry': 'Coba lagi',
     'errors.no_access.title': 'Belum ada akses',
     'errors.no_access.text':

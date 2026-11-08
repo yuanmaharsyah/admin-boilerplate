@@ -2,6 +2,7 @@ import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { formatCurrency, formatNumber } from '../../lib/format';
 import { Skeleton } from '../ui/skeleton';
+import { ChangeLine } from './ChangePill';
 import { Icon as NamedIcon } from './Icon';
 
 type Props = {
@@ -12,6 +13,10 @@ type Props = {
     format?: 'number' | 'currency';
     /** A StatusBadge next to the value, e.g. "Perlu dicek". */
     badge?: ReactNode;
+    /** Percent against the previous period, shown as a green / red pill. */
+    change?: number | null;
+    /** Text after the pill, e.g. "dibanding periode sebelumnya". */
+    caption?: string | null;
     /** Below the value, e.g. the widget's "Lihat semua →" button. */
     action?: ReactNode;
     loading?: boolean;
@@ -24,6 +29,8 @@ export function StatTile({
     value,
     format = 'number',
     badge,
+    change,
+    caption,
     action,
     loading = false,
 }: Props) {
@@ -62,6 +69,7 @@ export function StatTile({
                     {badge}
                 </div>
             )}
+            {!loading && <ChangeLine change={change} caption={caption} />}
             {action && !loading && <div className="mt-auto">{action}</div>}
         </section>
     );

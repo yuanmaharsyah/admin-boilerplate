@@ -69,7 +69,7 @@ it('collapses the sidebar to icons with Ctrl+B and keeps it after a reload', fun
     $user->assignLevel(Level::superAdmin());
     actingAs($user);
 
-    visit('/admin/invoices')
+    visit('/admin/customers')
         ->assertMissing('nav[aria-label="Navigasi"][data-collapsed]')
         ->keys('[aria-label="Ciutkan sidebar (Ctrl+B)"]', 'Control+b')
         ->assertPresent('nav[aria-label="Navigasi"][data-collapsed]')
@@ -93,5 +93,23 @@ it('opens the sidebar in a sheet on a phone and the palette from the search fiel
         ->resize(375, 800)
         ->click('[aria-label="Buka menu"]')
         ->assertPresent('[role="dialog"] nav[aria-label="Navigasi"]')
+        ->assertNoJavaScriptErrors();
+});
+
+it('opens the parent of the current page, marks the child and toggles the children', function (): void {
+    $user = User::factory()->create();
+    $user->assignLevel(Level::superAdmin());
+    actingAs($user);
+
+    visit('/admin/invoices/create')
+        ->assertAttribute('nav[aria-label="Navigasi"] button:has-text("Invoice")', 'aria-expanded', 'true')
+        ->assertPresent('nav[aria-label="Navigasi"] a[aria-current="page"]:has-text("Buat invoice")')
+        ->assertSeeIn('nav[aria-label="Navigasi"] a:has-text("Buat invoice")', 'Baru')
+        ->assertSeeIn('nav[aria-label="Navigasi"] a:has-text("Pelanggan")', 'Baru')
+        ->click('nav[aria-label="Navigasi"] button:has-text("Invoice")')
+        ->assertAttribute('nav[aria-label="Navigasi"] button:has-text("Invoice")', 'aria-expanded', 'false')
+        ->keys('[aria-label="Ciutkan sidebar (Ctrl+B)"]', 'Control+b')
+        ->click('nav[aria-label="Navigasi"] button[aria-label="Invoice"]')
+        ->assertPresent('[role="menu"] a:has-text("Daftar invoice")')
         ->assertNoJavaScriptErrors();
 });

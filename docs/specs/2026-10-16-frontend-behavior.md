@@ -41,6 +41,8 @@
 - **Long menus:** the sections scroll vertically; the app mark and the user block stay fixed.
 - **Below 1024px:** the sidebar is hidden. The topbar menu button opens it (expanded, 44px items) in a sheet, which closes on navigation.
 - **Search:** the topbar search field and `Ctrl+K` open the command palette.
+- **Submenu (restyle 02):** an item with `children` is a disclosure (chevron, `aria-expanded`); its children sit under a guide line and animate open (200 ms). The parent of the current route starts open; the child whose `route` equals `app.route` gets `aria-current="page"`. Collapsed sidebar: the parent icon opens its children in a menu to the right. The palette lists each child as "Item › Child".
+- **Badges:** `badge` on an item or child renders a round pill (`Badge`) after the label.
 - **Breadcrumbs:** come from the `breadcrumbs` page prop (a Data array) and render in `PageHeader` above the title (≥1024px); there is no client-side derivation.
 - **Downloads badge:** shows `downloads.ready_count`. It refreshes on each Inertia visit and every 30s with a partial reload of `downloads` only while the tab is visible.
 - **Site access banner:** shown when `app.site_access` is non-null (Akses Situs mode isn't `open`): the mode and its message, with a link to Settings → Akses Situs for Super Admin.
@@ -58,6 +60,8 @@
 - **Empty:** "Tidak ada hasil".
 
 ## 5. DataTable
+
+- **Look and motion (restyle 02):** the list sits in a card with the toolbar; the table in a bordered 12px box; header 16px/600 in the foreground colour (sort icon shows on hover until a sort is active); rows 56px with a 1px divider and a soft hover. Data rows fade up when they mount (a new page, search, filter): 20px, 500 ms ease-out, 250 ms apart, rows after the 8th share the last delay (`data-rows-in`). Skeleton rows don't animate; reduced motion turns it off.
 
 - **State lives in the URL query:** `search`, `filter[key]`, `sort` (`col` or `-col`), `page`, `per_page` (10/25/50/100, default 25).
   - Each change triggers an Inertia `router.get` with `preserveState`, `preserveScroll` and `replace`.
@@ -170,7 +174,7 @@
   - An empty dataset → the widget's own empty text.
 - **Links:** a card title with `href` links to the module ("Lihat semua ›"). Chart segments and bars link to the module index with the matching filter when the widget provides one.
 - **Empty page** (no widgets): an `EmptyState` listing the user's first 6 permitted menu items as links.
-- **Rendering:** `WidgetGrid` maps `type` → `StatTile` / `StatStack` / `SegmentBar` / `BarChartCard` / `WidgetTable`. No module ships its own widget component in v1.
+- **Rendering:** `WidgetGrid` maps `type` → `StatTile` / `StatStack` / `SegmentBar` / `BarChartCard` / `WidgetTable` / `AreaChartCard` / `DonutCard` / `ListCard`; `highlight()` stats render in the welcome card (`WidgetHighlights`). Narrow cards (`sm`) show "Lihat semua" as a round icon button. No module ships its own widget component.
 
 ## 9. Component Contract
 

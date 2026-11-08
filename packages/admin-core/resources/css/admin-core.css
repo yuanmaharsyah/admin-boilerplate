@@ -225,3 +225,47 @@
         @apply text-muted-foreground;
     }
 }
+
+/*
+ * List rows fade up one after another when they mount (a new page, a new
+ * search): 20px, 500ms ease-out, 250ms apart; rows after the 8th share the
+ * last delay so long pages don't keep the user waiting. Reduced motion turns
+ * it off (base layer rule).
+ */
+@keyframes rows-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+@layer components {
+    [data-rows-in] > tr {
+        animation: rows-in 500ms ease-out both;
+    }
+
+    [data-rows-in] > tr:nth-child(2) {
+        animation-delay: 250ms;
+    }
+    [data-rows-in] > tr:nth-child(3) {
+        animation-delay: 500ms;
+    }
+    [data-rows-in] > tr:nth-child(4) {
+        animation-delay: 750ms;
+    }
+    [data-rows-in] > tr:nth-child(5) {
+        animation-delay: 1000ms;
+    }
+    [data-rows-in] > tr:nth-child(6) {
+        animation-delay: 1250ms;
+    }
+    [data-rows-in] > tr:nth-child(7) {
+        animation-delay: 1500ms;
+    }
+    [data-rows-in] > tr:nth-child(8) {
+        animation-delay: 1750ms;
+    }
+    [data-rows-in] > tr:nth-child(n + 9) {
+        animation-delay: 1750ms;
+    }
+}

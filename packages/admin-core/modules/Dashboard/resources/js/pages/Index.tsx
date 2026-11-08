@@ -1,7 +1,10 @@
 import { EmptyState } from '@admin-core/components/admin/EmptyState';
 import { Icon } from '@admin-core/components/admin/Icon';
 import { PageHeader } from '@admin-core/components/admin/PageHeader';
-import { WidgetGrid } from '@admin-core/components/admin/WidgetGrid';
+import {
+    WidgetGrid,
+    WidgetHighlights,
+} from '@admin-core/components/admin/WidgetGrid';
 import { Button } from '@admin-core/components/ui/button';
 import { useT } from '@admin-core/lib/i18n';
 import { Head, Link, router, usePage } from '@inertiajs/react';
@@ -42,7 +45,7 @@ export default function Index({ dashboard }: { dashboard: Page }) {
         <>
             <Head title={t('dashboard.title')} />
             <div className="flex flex-col gap-4 lg:gap-6">
-                <section className="rounded-xl border border-border bg-card p-6 text-card-foreground">
+                <section className="flex flex-col gap-6 rounded-xl border border-border bg-card p-6 text-card-foreground">
                     <PageHeader
                         title={t('dashboard.title')}
                         description={t(greeting(new Date().getHours()), {
@@ -83,6 +86,7 @@ export default function Index({ dashboard }: { dashboard: Page }) {
                             )
                         }
                     />
+                    <WidgetHighlights widgets={dashboard.widgets} />
                 </section>
                 {dashboard.widgets.length > 0 ? (
                     <WidgetGrid widgets={dashboard.widgets} />

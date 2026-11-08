@@ -31,7 +31,7 @@ Read in this order and stop as soon as you have enough:
 1. **This file:** find the recipe or key file you need.
 2. **The target module folder only** (`skeleton/modules/{Name}` or `packages/admin-core/modules/{Name}`). Modules are self-contained.
 3. **A core file from §5** only if the recipe points you there.
-4. **Building a screen:** its design source (`docs/design-implementation/README.md` says which: an approved mockup, a `reference/` file where that private folder exists, or derived) plus the matching section of `docs/specs/*-frontend-behavior.md`. See Recipe R13.
+4. **Building a screen or component:** the skill `admin-ui-components` (the house-style catalogue; live at `/admin/components`), then its design source (`docs/design-implementation/README.md` says which: an approved mockup, a `reference/` file where that private folder exists, or derived) plus the matching section of `docs/specs/*-frontend-behavior.md`. See Recipe R13.
 5. **The specs** only for the reason behind a rule, or when proposing a change.
 
 Never open `vendor/`, `node_modules/`, `storage/` or `public/build/`. **Never read `docs/design-implementation/briefs/`** (input for the UI/UX model). UI sources in priority order: approved mockups → `reference/` (owner's own design work, private: absent from the public repository, then skip it; read and adapt freely, but map colours to tokens and never copy its JS or libraries) → `docs/specs/*-ui-design.md`. Behaviour always comes from the frontend-behavior spec.
@@ -106,9 +106,9 @@ Writes follow the same path:
 | File | Responsibility | Touch when |
 |---|---|---|
 | `AdminCoreServiceProvider.php` | Boots everything below | Registering a new core service |
-| `Registry/ModuleDefinition.php` | Typed, validated `module.php` | Adding a `module.php` key (spec change) |
+| `Registry/ModuleDefinition.php` | Typed, validated `module.php`; optional `badge` (menu pill) and `submenu` (children: relative route, action, badge) | Adding a `module.php` key (spec change) |
 | `Registry/ModuleRegistry.php` | Discovery, routes, providers, migrations, cache | Changing how modules load |
-| `Registry/MenuBuilder.php` | Menu from definitions + permissions | Menu behaviour |
+| `Registry/MenuBuilder.php` | Menu from definitions + permissions; `MenuItemData.badge` / `children` (`MenuChildData`, each filtered by `{slug}.{action}`) | Menu behaviour |
 | `Registry/PageResolver.php` | `Name::Page` → file (case-exact, via `CaseSensitiveViewFinder`), overrides, `viteEntry()` for the root Blade view | Page resolution |
 | `Permissions/PermissionSynchronizer.php` | DB permissions = module configs | Never for features; only bugs |
 | `Permissions/PermissionMatrix.php` | Matrix read/save + dependency rule + audit + `LevelPermissionsUpdated` | Matrix behaviour |
@@ -155,14 +155,15 @@ Writes follow the same path:
 | `Audit/AuditPruner.php` + `Console/AuditPruneCommand.php` | `admin:audit-prune`: the only code that deletes activity rows (older than `audit.retention_days`), leaves one `audit_pruned` row | Retention behaviour |
 | `Audit/HasActivityHistory.php` | Model trait: `activityHistory($viewer)`, 20 per page, SA rule applied | — |
 | `../database/migrations/*` | Core migrations (`activity_log`); loaded by the service provider | New core table (additive only) |
-| `Dashboard/{Widget,WidgetType,WidgetSize,DashboardRange}.php` + `Data/Widgets/*` | Widget base class (spec §7.2: key, label, type, size, tall, order, permission, usesRange, cacheSeconds, sharedCache, href, emptyText, `data()`); `resolve()` caches and checks the type's Data object; `prop()` = `widget_{key}` with `_` for `.`/`-`; one Data object per type (`StatWidgetData`, `StatStackWidgetData`, `SegmentWidgetData`, `BarChartWidgetData`, `TableWidgetData`, figures as `WidgetFigureData`) | Widget API |
-| `Dashboard/WidgetRegistry.php` | Widgets of the enabled modules; `forUser()` filters by permission, orders, caps at `admin-core.dashboard.max_widgets` | — |
+| `Dashboard/{Widget,WidgetType,WidgetSize,DashboardRange}.php` + `Data/Widgets/*` | Widget base class (spec §7.2: key, label, type, size, tall, order, permission, usesRange, cacheSeconds, sharedCache, href, emptyText, `highlight()` (a `stat` shown in the welcome card), `data()`); `DashboardRange::previous()` / `::change()` for the change against the previous range; types `stat`, `stat_stack`, `segment`, `bar_chart` (+ `negative`, `compare`, `summary`), `table`, `area_chart`, `donut`, `list` (`ListRowData`: tone, change, progress); `resolve()` caches and checks the type's Data object; `prop()` = `widget_{key}` with `_` for `.`/`-`; one Data object per type (`StatWidgetData`, `StatStackWidgetData`, `SegmentWidgetData`, `BarChartWidgetData`, `TableWidgetData`, figures as `WidgetFigureData`) | Widget API |
+| `Dashboard/WidgetRegistry.php` | Widgets of the enabled modules; `forUser()` filters by permission, orders, caps the cards at `admin-core.dashboard.max_widgets` (16) and the highlights at two | — |
 | `../modules/Dashboard/*` | Core Beranda module (`dashboard`, group `beranda`, `view`): `dashboard` prop (`DashboardPageData`: widget metadata + range) + one deferred, rescued prop per widget in its own group | Beranda behaviour |
+| `../modules/Components/*` | Core Komponen module (superadmin_only, `/admin/components`): the live house-style catalogue, one section per component with import and code to copy; the same catalogue for AI is the skill `admin-ui-components` | A component is added or changed (R21) |
 | `../modules/Settings/*` | Core Pengaturan module (superadmin_only): one tab per registry group, `PUT {group}` (`UpdateSettingsData`, rules from the registry; the page posts with `_method=PUT` so files travel) | Settings screen |
 | `../modules/AuditLog/Widgets/{FailedLogins,ActivityByDay}.php` | The two core widgets (stat `sm`, bar chart `full`) | — |
 | `../modules/AuditLog/*` | Core AuditLog module (`audit-log`, `view, download`, read-only): `AuditQuery` (`filter()` range on `created_on` + user + module, `scope()` adds `visibleTo()`, `events()` the list), `AuditFilterOptions`, `AuditLogExport` (a `ListExport`), `?event_id=` drawer | Log Aktivitas behaviour |
 | `../modules/AuditLog/Services/AuditSummary.php` | Audit KPIs and chart data, cached 5 min per (range, user, module, viewer-is-SA). Non-SA counts = all rows minus `involvingUsers(superAdminIds())` rows; active users = one `EXISTS` per user through `visibleTo()`; per event × day and the exported-rows sum in one grouped query on the `(created_on, event, export_rows)` index (virtual columns). < 500 ms on 1 M rows (`composer test:perf`) | Audit summary behaviour (keep `AuditLogTest`'s subtraction-equals-direct test and rerun `test:perf`) |
-| `Testing/ContractAssertions.php` | Runtime contract checks of spec §9.1 (shape, definitions, route protection, policies, permission sync, no direct permissions, audit coverage, audit call sites, masking, widgets); static, run by the package `tests/Contract` and the skeleton `ContractTest` | New contract rule (add its negative test against `tests/Fixtures/Broken`) |
+| `Testing/ContractAssertions.php` | Runtime contract checks of spec §9.1 (shape, definitions, submenu routes (`assertSubmenuRoutes()`: GET, no parameters, the child's permission), route protection, policies, permission sync, no direct permissions, audit coverage, audit call sites, masking, widgets); static, run by the package `tests/Contract` and the skeleton `ContractTest` | New contract rule (add its negative test against `tests/Fixtures/Broken`) |
 | `Testing/ModuleAssertions.php` | Module test helpers (R11, R16) | New helper |
 | `Testing/ArchRules.php` | Filesystem inputs for the Pest arch tests (module namespaces, isolation map, source scans) | New arch rule Pest can't express |
 | `PHPStan/*` + `../extension.neon` | PHPStan rules for controllers: Inertia props are Data objects, no raw request input (`adminCore.inertiaProps`, `adminCore.requestInput`); projects include the neon file | New static rule (with a `RuleTestCase` and a violating fixture) |
@@ -178,13 +179,13 @@ Writes follow the same path:
 
 | Path | Responsibility |
 |---|---|
-| `layouts/AdminLayout.tsx` | The shell (ui-design §2, frontend-behavior §3): one sidebar (icon-only when collapsed, `Ctrl+B`, cookie `admin_panel`; a sheet below 1024px), inset main panel with the topbar (search field, downloads, theme, user menu), site access banner, palette. Takes `links` (profile, logout) from the project's `resources/js/layouts/admin-layout.tsx` wrapper, so URLs stay Wayfinder-typed. Open states (sheet, palette) are keyed to the URL, so they close on navigation without effects |
+| `layouts/AdminLayout.tsx` | The shell (ui-design §2, frontend-behavior §3): one sidebar (submenu parents open on the current route, flyout when collapsed, badges) (icon-only when collapsed, `Ctrl+B`, cookie `admin_panel`; a sheet below 1024px), inset main panel with the topbar (search field, downloads, theme, user menu), site access banner, palette. Takes `links` (profile, logout) from the project's `resources/js/layouts/admin-layout.tsx` wrapper, so URLs stay Wayfinder-typed. Open states (sheet, palette) are keyed to the URL, so they close on navigation without effects |
 | `components/admin/{AppSidebar,Breadcrumbs,UserMenu,ThemeToggle,MaintenanceBanner,PageHeader,CommandPalette,Toaster}.tsx` | Shell parts (`MaintenanceBanner` shows `app.site_access`). `AppSidebar`: every group as a labelled section; the active item from `app.route` (`{slug}.` prefix); `PageHeader` shows the breadcrumbs from the `breadcrumbs` page prop (`BreadcrumbsData`) above the title; palette from `menu` (+ `create_href`) and `admin_recent`; toasts from native flash |
 | `hooks/useAppearance.ts`, `hooks/useRecentPages.ts` | Theme (cookie `appearance`, applied before paint) and the palette's last 5 pages |
-| `components/admin/{DataTable,DataTableToolbar,DataTablePagination}.tsx`, `hooks/useTableQuery.ts` | Server-side table: typed `DataTableColumn<T>` (`key` must be a row property), URL state, filter chips, column menu (`dt_cols:{slug}`), page-scoped selection + bulk delete, row menu, skeleton / empty / no-results / error states |
+| `components/admin/{DataTable,DataTableToolbar,DataTablePagination}.tsx`, `hooks/useTableQuery.ts` | Server-side table in the house style (card with toolbar, bordered table box, 16px/600 header, 56px rows; rows fade up through `data-rows-in` on the `tbody`, styled in `admin-core.css`): typed `DataTableColumn<T>` (`key` must be a row property), URL state, filter chips, column menu (`dt_cols:{slug}`), page-scoped selection + bulk delete, row menu, skeleton / empty / no-results / error states |
 | `components/admin/{TextField,TextareaField,SelectField,ComboboxField,RelationSelect,DateField,NumberField,SwitchField}.tsx` | Form controls inside `FormField` (shared `FieldProps<V>`: name, label, value, onChange, error, required, help). `NumberField` (+ `CurrencyField`) shows id-ID, keeps a number, takes either notation; `DateField` keeps `YYYY-MM-DD` (`withTime`: `YYYY-MM-DD HH:mm`), shows "20 Okt 2026", takes typed `dd/mm/yyyy`, calendar in a popover; `RelationSelect` searches a module's `lookup` route (`LookupData`) |
 | `components/admin/{FormFooter,FormErrorSummary,UnsavedChangesGuard,StaleUpdateDialog,DetailGrid}.tsx`, `hooks/useAdminForm.ts` | Sticky Batal / Simpan bar, error summary, leave-page guard, 409 dialog, label/value grid; `useAdminForm` = `useForm` + focus on the first error + 409 → `stale` |
-| `components/admin/{StatTile,StatStack,SegmentBar,BarChartCard,FilterBar,RangeFilter}.tsx`, `components/ui/{chart,skeleton}.tsx` | Summary sections (frontend-behavior §9): KPI tile, stacked figures, clickable segmented bar, bar chart card (recharts through shadcn `chart`, `--chart-*` tokens, reduced motion, hidden data table), URL-driven filter menus and range picker (presets + custom, max days) |
+| `components/admin/{StatTile,StatStack,SegmentBar,BarChartCard,AreaChartCard,DonutCard,ListCard,CardHeading,ChangePill,FilterBar,RangeFilter}.tsx`, `components/ui/{chart,skeleton,badge}.tsx` | Summary sections (frontend-behavior §9): KPI tile (change pill, action), area / donut / list cards, the card title, the +/−% pill, the shadcn `Badge`, stacked figures, clickable segmented bar, bar chart card (recharts through shadcn `chart`, `--chart-*` tokens, reduced motion, hidden data table), URL-driven filter menus and range picker (presets + custom, max days) |
 | `components/admin/{DiffTable,ActivityDrawer,ActivityHistory}.tsx` | Audit row diff (masked values marked, long JSON folded), the `?event_id=` drawer, the Riwayat tab (loads its optional prop on open) |
 | `components/admin/{EmptyState,StatusBadge,ConfirmDialog,ForceDeleteDialog}.tsx` | Empty state, status pill (tones, never yellow), delete confirm (focus on Batal), permanent-delete confirm (type the name) |
 | `pages/Trash/Index.tsx` | `Core::Trash/Index`, a module's Super Admin Trash |
@@ -200,8 +201,8 @@ Writes follow the same path:
 | `hooks/usePermission.ts` | `can()`, `canAny()`, `isSuperAdmin` |
 | `lib/format.ts` | id-ID dates, numbers, Rupiah; `formatLocalDate()` / `formatLocalDateTime()` for form values (no timezone), `parseLocalDate()` (`dd/mm/yyyy`), `parseNumber(text, decimalDot)` (either notation; a lone `.` is decimal in decimal fields, thousands in Rupiah) |
 | `lib/i18n.ts` + `lang/id.ts`, `lang/en.ts` | `useT()` → `t(key, {name})`, locale from `<html lang>` (works outside a page, e.g. the toaster). `id.ts` defines the keys; `en.ts` must have exactly the same keys (tsc fails otherwise). Modules add their own dictionaries (R19); the app merges them with `registerMessages()` |
-| `../css/admin-core.css` | Theme: tokens (light/dark), Tailwind mapping, named steps (`text-title`, `text-section`, `text-kpi`, `text-card-title`, `text-brand`, `text-label`, `h-control`, `h-control-sm`, `h-control-compact`, `h-control-auth`, `h-row`), shadows, overlay, Geist fonts. Projects import it from `app.css` and override only `--highlight` |
-| `components/admin/{WidgetGrid,WidgetTable}.tsx` | Beranda (frontend-behavior §8.6): each card in `<Deferred data={prop}>` with a type skeleton and a "Gagal memuat" + "Coba lagi" rescue; type → `StatTile` / `StatStack` / `SegmentBar` / `BarChartCard` / `WidgetTable`; the widget's empty text when every figure is 0 |
+| `../css/admin-core.css` | Theme: tokens (light/dark), the `rows-in` fade-up of `[data-rows-in] > tr` (20px, 500 ms, 250 ms apart, capped after row 8), the reduced-motion switch, Tailwind mapping, named steps (`text-title`, `text-section`, `text-kpi`, `text-card-title`, `text-brand`, `text-label`, `h-control`, `h-control-sm`, `h-control-compact`, `h-control-auth`, `h-row`), shadows, overlay, Geist fonts. Projects import it from `app.css` and override only `--highlight` |
+| `components/admin/{WidgetGrid,WidgetTable}.tsx` | Beranda (frontend-behavior §8.6): `WidgetHighlights` in the welcome card; each card in `<Deferred data={prop}>` with a type skeleton and a "Gagal memuat" + "Coba lagi" rescue; type → `StatTile` / `StatStack` / `SegmentBar` / `BarChartCard` / `WidgetTable`; the widget's empty text when every figure is 0 |
 | `components/admin/{ImageField,AppMark}.tsx` | One image upload with a preview (Settings branding); the 32px app mark (logo or the name's letter) in the sidebar and the auth card |
 | `pages/Errors/{NoAccess,SiteAccess}.tsx` | `Core::Errors/NoAccess` (signed in, nothing permitted: sign out) and `Core::Errors/SiteAccess` (public page in maintenance / coming soon) |
 | `layouts/AuthLayout.tsx`, `components/admin/{AuthCard,FormField,PasswordInput}.tsx` | Centered auth layout (also used by error pages), the auth card, label + control + help + error, password with show / hide |
@@ -273,13 +274,13 @@ Skill `admin-audit`: `packages/admin-core/resources/boost/skills/admin-audit/SKI
 ### R15. Protect a personal-data field in the audit log · _Phase 03a_
 Skill `admin-audit`: `packages/admin-core/resources/boost/skills/admin-audit/SKILL.md`.
 
-### R16. Add a Beranda widget · _Phase 08_
-Skill `admin-dashboard-widget`: `packages/admin-core/resources/boost/skills/admin-dashboard-widget/SKILL.md`.
+### R16. Add a Beranda widget · _Phase 08, types extended in restyle 02_
+Skill `admin-dashboard-widget`: `packages/admin-core/resources/boost/skills/admin-dashboard-widget/SKILL.md`. One example of every type: `skeleton/modules/Invoice/Widgets` (fill it with `php artisan db:seed --class="Modules\Invoice\Database\Seeders\DemoSeeder"`).
 
 ### R17. Build a list page · _Phase 06a_
 1. Model: `implements DataTableModel`, `use HasDataTable, HasVisibilityScope`; an "own unit only" rule goes in `applyVisibility()`; override `dataTableSearch()` (columns), `dataTableSorts()`, `dataTableFilters()` (`DataTableFilterData` + `OptionData` options). Index every sort and filter column.
 2. Controller `index(Request $request)`: `Gate::authorize('viewAny', …)` → `PaginatedData::fromPaginator(Model::query()->visibleTo($request->user())->with(…)->dataTable($request), …ListItemData::class)` and `'table' => Model::dataTableState($request)`.
-3. Page: `<DataTable data state columns slug label itemLabel rowLabel rowActions bulkDelete empty />`. Column keys are typed against the row; pass `rowActions` items and `bulkDelete` only for permitted actions (`can()`).
+3. Page: `<DataTable data state columns slug label itemLabel rowLabel rowActions bulkDelete empty />`. Column keys are typed against the row; pass `rowActions` items and `bulkDelete` only for permitted actions (`can()`). The card, toolbar, header style and the rows' fade-up come with it: don't wrap it in another card or animate rows yourself. A table that isn't a `DataTable` (a widget, a detail list) gets the same fade-up by putting `data-rows-in` on its `tbody`.
 4. Example: `skeleton/modules/Invoice` (demo module).
 
 ### R18. Delete and Trash · _Phase 06a_
@@ -298,6 +299,16 @@ Skill `admin-dashboard-widget`: `packages/admin-core/resources/boost/skills/admi
 
 ### R20. Translate a module's UI strings · _Phase 06b_
 Skill `admin-translate`: `packages/admin-core/resources/boost/skills/admin-translate/SKILL.md`.
+
+### R21. Build or change a UI component · _restyle 02_
+1. Read the skill `admin-ui-components` and open `/admin/components` as Super Admin: reuse what is there, composed, not restyled.
+2. Nothing fits: start from the shadcn primitive in `packages/admin-core/resources/js/components/ui` (add one there when a core component first needs it), build the component in `components/admin`, typed props, theme tokens only (no hex, no inline style, no arbitrary `var(--…)`), light + dark, 375px, keyboard.
+3. Motion: only the existing ones (ui-design §1 "Motion"). Lists fade up through `data-rows-in`.
+4. Add a section to `packages/admin-core/modules/Components/resources/js/pages/Index.tsx` (live example + import + code) and an entry to the skill, in the same change; `BoostDocsTest` fails if the skill names something that doesn't exist.
+5. A new widget look is a new widget type (spec §7.2 change: Data class, `WidgetType` case, `WidgetGrid` case, `make:widget` stub).
+
+### R22. Menu badge and submenu · _restyle 02_
+In `module.php`: `'badge' => 'Baru'` (≤ 24 characters, translation key allowed) puts a pill on the item; `'submenu' => [['label' => …, 'route' => 'index'], ['label' => …, 'route' => 'create', 'action' => 'create', 'badge' => 'Baru']]` turns it into a parent with children. Each child is a parameterless GET route of the module protected by `permission:{slug}.{action}` (contract `assertSubmenuRoutes()`); a user sees only the children they may open. Example: `skeleton/modules/Invoice/module.php`.
 
 ### R12. Deploy / update a server · _Phase 10_
 Skill `admin-deploy`: `packages/admin-core/resources/boost/skills/admin-deploy/SKILL.md`.

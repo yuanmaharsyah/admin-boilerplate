@@ -277,6 +277,7 @@ export const en: Messages = {
         'The server did not respond. Check the connection and try again.',
     'widgets.see_all': 'See all',
     'widgets.failed': 'Could not load',
+    'widgets.full_report': 'View full report',
     'widgets.retry': 'Try again',
     'errors.no_access.title': 'No access yet',
     'errors.no_access.text':

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
+use Yuan\AdminCore\Data\MenuChildData;
 use Yuan\AdminCore\Data\MenuGroupData;
 use Yuan\AdminCore\Data\MenuItemData;
 use Yuan\AdminCore\Registry\MenuBuilder;
@@ -73,5 +74,32 @@ it('builds groups and items with label, icon and link', function (): void {
         new MenuGroupData('master', 'Master Data', 'database', [
             new MenuItemData('demo', 'Demo', 'receipt', url('/admin/demo')),
         ]),
+    ]);
+});
+
+it('adds the badge and only the submenu children the user may open', function (): void {
+    $root = temporaryRoot();
+    writeModule($root, 'Invoice', [
+        'badge' => 'Baru',
+        'submenu' => [
+            ['label' => 'Daftar', 'route' => 'index'],
+            ['label' => 'Tambah', 'route' => 'create', 'action' => 'create', 'badge' => 'Baru'],
+        ],
+    ]);
+    useModuleRoots([['name' => 'project', 'path' => $root, 'namespace' => 'Temp\\']]);
+    Route::get('/admin/invoices', fn (): string => 'index')->name('invoices.index');
+    Route::get('/admin/invoices/create', fn (): string => 'create')->name('invoices.create');
+    app('router')->getRoutes()->refreshNameLookups();
+    Gate::define('invoices.view', fn (): bool => true);
+    $item = fn (): MenuItemData => app(MenuBuilder::class)->build(makeUser())[0]->items[0];
+
+    expect($item()->badge)->toBe('Baru')
+        ->and($item()->children)->toEqual([new MenuChildData('Daftar', url('/admin/invoices'), 'invoices.index')]);
+
+    Gate::define('invoices.create', fn (): bool => true);
+
+    expect($item()->children)->toEqual([
+        new MenuChildData('Daftar', url('/admin/invoices'), 'invoices.index'),
+        new MenuChildData('Tambah', url('/admin/invoices/create'), 'invoices.create', 'Baru'),
     ]);
 });

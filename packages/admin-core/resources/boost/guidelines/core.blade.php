@@ -49,7 +49,8 @@ This project is a Laravel 13 + Inertia 3 + React 19 + TypeScript admin panel bui
 
 - TS strict, no `any`, no `@ts-ignore`. Types come from `generated.d.ts`; never hand-write prop types that a Data class can generate.
 - URLs and route names only through Wayfinder helpers. Never hardcode a URL string.
-- Use the `@admin-core` components (`DataTable`, `FormField`, `RelationSelect`, `ConfirmDialog`…) and the shadcn primitives in `@admin-core/components/ui`. A new generic component belongs in the core package.
+- Use the `@admin-core` components (`DataTable`, `FormField`, `RelationSelect`, `ConfirmDialog`…) and the shadcn primitives in `@admin-core/components/ui`. Read the skill `admin-ui-components` (the house-style catalogue, also live at `/admin/components`) before building UI. A new generic component belongs in the core package and in that catalogue, in the same change.
+- The look is shadcnspace-inspired: match it with our tokens and components, never copy shadcnspace or WrapPixel code, markup or assets. List rows fade up through `data-rows-in` on the `tbody`; add no other animation.
 - Forms: `useAdminForm` + `FormField`, `UnsavedChangesGuard` on edit forms, `StaleUpdateDialog` for a 409.
 - Formatting only through `@admin-core/lib/format` (id-ID). User strings through `useT()`, Bahasa Indonesia first; every key in both the module's `id.ts` and `en.ts`.
 - Theme tokens only (`bg-card`, `text-muted-foreground`…): no hex colors, no inline styles. Works in light and dark mode, at 375px and with the keyboard only.

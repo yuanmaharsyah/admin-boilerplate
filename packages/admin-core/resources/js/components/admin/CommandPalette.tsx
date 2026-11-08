@@ -27,7 +27,16 @@ export function CommandPalette({ open, onOpenChange, menu }: Props) {
     const t = useT();
     const { can } = usePermission();
     const items = menu.flatMap((group) =>
-        group.items.map((item) => ({ ...item, group: group.label })),
+        group.items.flatMap((item) => [
+            { ...item, group: group.label },
+            ...item.children.map((child) => ({
+                ...item,
+                label: `${item.label} › ${child.label}`,
+                href: child.href,
+                create_href: null,
+                group: group.label,
+            })),
+        ]),
     );
     const actions = items.filter(
         (item) => item.create_href !== null && can(`${item.slug}.create`),
@@ -91,7 +100,7 @@ export function CommandPalette({ open, onOpenChange, menu }: Props) {
                         <Section heading={t('palette.navigation')}>
                             {items.map((item) => (
                                 <Item
-                                    key={`nav-${item.slug}`}
+                                    key={`nav-${item.href}`}
                                     value={`${item.label} ${item.group}`}
                                     icon={
                                         <Icon

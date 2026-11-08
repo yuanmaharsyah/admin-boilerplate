@@ -10,6 +10,19 @@ All notable changes to `yuanmaharsyah/admin-core` are documented here. The forma
 - `PageHeader`: the breadcrumbs move above the title (from the topbar); no 2px ink rule.
 - Beranda: welcome card header with a segmented range control; widget cards get a 1px border and 12px radius; `StatTile` shows the title with a round icon and takes an `action` (the widget's "Lihat semua →" button, which replaces the whole-card link); rounded chart bars; `StatusBadge` is a round pill.
 
+### Added (restyle 02)
+- `module.php` optional keys `badge` (menu pill) and `submenu` (children: relative route, action, badge); `MenuItemData.badge` / `children` (`MenuChildData`); the sidebar renders parents with animated children (flyout when collapsed) and the palette lists the children. Contract `ContractAssertions::assertSubmenuRoutes()`.
+- Widget types `area_chart` (`AreaChartWidgetData`), `donut` (`DonutWidgetData`), `list` (`ListWidgetData` + `ListRowData` with tone, change and progress); `StatWidgetData.change` / `caption`; `BarChartWidgetData.negative`, `compare`, `series`, `compare_series`, `summary`; `Widget::highlight()` (a stat in the welcome card); `DashboardRange::previous()` / `::change()`; `make:widget` stubs for the new types. Components `AreaChartCard`, `DonutCard`, `ListCard`, `CardHeading`, `ChangePill`, `WidgetHighlights`, `ui/badge`.
+- DataTable house look and the row fade-up (`data-rows-in` on a `tbody`, keyframes in `admin-core.css`).
+- Core module **Komponen** (`components`, superadmin_only): the live component catalogue; Boost skill `admin-ui-components` (the same catalogue for AI agents).
+
+### Changed (restyle 02)
+- `admin-core.dashboard.max_widgets` defaults to 16 and counts cards only; highlights are capped at two on their own.
+- `StatusBadge` is built on `Badge`; `StatTile` shows `change` / `caption` and takes `action`; `BarChartCard` takes `tickFormat`, `aside`, `legend`.
+
+### Fixed
+- `useAdminForm` focuses the first invalid field after the render that shows the errors; it used to look for it one frame after the error event and sometimes found nothing (flaky `FormsTest`).
+
 ### Removed
 - `AppRail`, `ItemPanel`, the `--rail*` and `--sidebar-active*` tokens, the `w-rail` / `w-panel` sizes, `navigatesDirectly()` and the `shell.rail` / `shell.panel*` strings. `--rule` stays for the screens not restyled yet, now a plain divider colour.
 

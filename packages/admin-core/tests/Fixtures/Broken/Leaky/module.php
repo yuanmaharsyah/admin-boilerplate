@@ -21,4 +21,9 @@ return [
         Unsynced::class,
         Duplicate::class,
     ],
+    // A child whose route is unprotected, and one whose route does not exist.
+    'submenu' => [
+        ['label' => 'Daftar', 'route' => 'index'],
+        ['label' => 'Arsip', 'route' => 'archive'],
+    ],
 ];

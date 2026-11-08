@@ -262,7 +262,7 @@ export type AuditEvent = 'created' | 'updated' | 'deleted' | 'restored' | 'force
 }
 namespace Dashboard {
 export type WidgetSize = 'sm' | 'md' | 'lg' | 'full';
-export type WidgetType = 'stat' | 'stat_stack' | 'segment' | 'bar_chart' | 'table';
+export type WidgetType = 'stat' | 'stat_stack' | 'segment' | 'bar_chart' | 'table' | 'area_chart' | 'donut' | 'list';
 }
 namespace Data {
 export type AppData = {
@@ -368,6 +368,12 @@ label: string,
 export type LookupData = {
 items: Yuan.AdminCore.Data.OptionData[],
 };
+export type MenuChildData = {
+label: string,
+href: string,
+route: string,
+badge: string | null,
+};
 export type MenuGroupData = {
 key: string,
 label: string,
@@ -380,6 +386,8 @@ label: string,
 icon: string,
 href: string,
 create_href: string | null,
+badge: string | null,
+children: Yuan.AdminCore.Data.MenuChildData[],
 };
 export type NoAccessPageData = {
 logout_href: string,
@@ -562,9 +570,42 @@ display: string | null,
 };
 }
 namespace Widgets {
+export type AreaChartWidgetData = {
+value: number,
+points: Yuan.AdminCore.Data.Widgets.WidgetFigureData[],
+format: 'number' | 'currency',
+change: number | null,
+caption: string | null,
+};
 export type BarChartWidgetData = {
 bars: Yuan.AdminCore.Data.Widgets.WidgetFigureData[],
 unit: string,
+negative: Yuan.AdminCore.Data.Widgets.WidgetFigureData[],
+summary: Yuan.AdminCore.Data.Widgets.WidgetFigureData[],
+compare: Yuan.AdminCore.Data.Widgets.WidgetFigureData[],
+series: string | null,
+compare_series: string | null,
+};
+export type DonutWidgetData = {
+value: number,
+segments: Yuan.AdminCore.Data.Widgets.WidgetFigureData[],
+format: 'number' | 'currency',
+change: number | null,
+caption: string | null,
+};
+export type ListRowData = {
+key: string,
+title: string,
+value: string,
+icon: string,
+subtitle: string | null,
+tone: 'neutral' | 'success' | 'destructive',
+href: string | null,
+change: number | null,
+progress: number | null,
+};
+export type ListWidgetData = {
+rows: Yuan.AdminCore.Data.Widgets.ListRowData[],
 };
 export type SegmentWidgetData = {
 segments: Yuan.AdminCore.Data.Widgets.WidgetFigureData[],
@@ -577,6 +618,8 @@ value: number,
 icon: string,
 format: 'number' | 'currency',
 badge: string | null,
+change: number | null,
+caption: string | null,
 };
 export type TableWidgetData = {
 columns: Yuan.AdminCore.Data.OptionData[],
@@ -593,12 +636,13 @@ export type WidgetMetaData = {
 key: string,
 prop: string,
 label: string,
-type: 'stat' | 'stat_stack' | 'segment' | 'bar_chart' | 'table',
+type: 'stat' | 'stat_stack' | 'segment' | 'bar_chart' | 'table' | 'area_chart' | 'donut' | 'list',
 size: 'sm' | 'md' | 'lg' | 'full',
 tall: boolean,
 uses_range: boolean,
 href: string | null,
 empty: string,
+highlight: boolean,
 };
 }
 }
@@ -647,6 +691,22 @@ by_day: Yuan.AdminCore.Modules.AuditLog.Data.AuditCountData[],
 bucket: 'day' | 'week',
 from: string,
 to: string,
+};
+}
+}
+namespace Components {
+namespace Data {
+export type ComponentsPageData = {
+table: Yuan.AdminCore.Data.PaginatedData<Yuan.AdminCore.Modules.Components.Data.SampleRowData>,
+state: Yuan.AdminCore.Data.DataTableStateData,
+};
+export type SampleRowData = {
+id: number,
+name: string,
+city: string,
+status: 'paid' | 'sent' | 'draft',
+total: number,
+date: string,
 };
 }
 }
