@@ -1,4 +1,4 @@
-import { Deferred, Link, router, usePage } from '@inertiajs/react';
+import { Deferred, router, usePage } from '@inertiajs/react';
 import { RotateCw } from 'lucide-react';
 import { formatLocalDate, formatNumber } from '../../lib/format';
 import { useT } from '../../lib/i18n';
@@ -76,11 +76,9 @@ function Failed({ widget }: { widget: Meta }) {
     return (
         <section
             aria-label={widget.label}
-            className="flex min-w-0 flex-col gap-3 rounded bg-card p-6 text-card-foreground"
+            className="flex min-w-0 flex-col gap-3 rounded-xl border border-border bg-card p-6 text-card-foreground"
         >
-            <h2 className="border-b-2 border-rule pb-3 text-card-title">
-                {widget.label}
-            </h2>
+            <h2 className="text-card-title">{widget.label}</h2>
             <p className="m-0 text-table text-muted-foreground">
                 {t('widgets.failed')}
             </p>
@@ -125,9 +123,9 @@ function WidgetCard({ widget, data }: { widget: Meta; data?: WidgetData }) {
         return (
             <section
                 aria-label={widget.label}
-                className="flex min-w-0 flex-col gap-3 rounded bg-card p-6 text-card-foreground"
+                className="flex min-w-0 flex-col gap-3 rounded-xl border border-border bg-card p-6 text-card-foreground"
             >
-                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 border-b-2 border-rule pb-3">
+                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
                     <h2 className="flex-1 text-card-title">{widget.label}</h2>
                     {seeAll}
                 </div>
@@ -142,30 +140,20 @@ function WidgetCard({ widget, data }: { widget: Meta; data?: WidgetData }) {
         case 'stat': {
             const stat = data as
                 Yuan.AdminCore.Data.Widgets.StatWidgetData | undefined;
-            const tile = (
+            return (
                 <StatTile
                     icon={stat?.icon ?? 'activity'}
                     label={widget.label}
                     value={stat?.value ?? 0}
                     format={stat?.format}
                     loading={loading}
+                    action={seeAll}
                     badge={
                         stat?.badge ? (
                             <StatusBadge tone="warning" label={stat.badge} />
                         ) : undefined
                     }
                 />
-            );
-
-            return widget.href && !loading ? (
-                <Link
-                    href={widget.href}
-                    className="block rounded hover:ring-1 hover:ring-border [&>section]:h-full"
-                >
-                    {tile}
-                </Link>
-            ) : (
-                tile
             );
         }
         case 'stat_stack': {
@@ -250,11 +238,9 @@ function WidgetCard({ widget, data }: { widget: Meta; data?: WidgetData }) {
                 <section
                     aria-label={widget.label}
                     aria-busy="true"
-                    className="flex min-w-0 flex-col gap-3 rounded bg-card p-6 text-card-foreground"
+                    className="flex min-w-0 flex-col gap-3 rounded-xl border border-border bg-card p-6 text-card-foreground"
                 >
-                    <h2 className="border-b-2 border-rule pb-3 text-card-title">
-                        {widget.label}
-                    </h2>
+                    <h2 className="text-card-title">{widget.label}</h2>
                     {[0, 1, 2, 3, 4].map((row) => (
                         <Skeleton key={row} className="h-4 w-full" />
                     ))}

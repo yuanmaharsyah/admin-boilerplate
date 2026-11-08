@@ -34,20 +34,14 @@
 
 ## 3. Shell
 
-- **Structure:** a rail of **groups** (56px, always visible on ≥1024px) and an item panel (220px) showing the active group's items.
+- **Structure:** one sidebar (240px, ≥1024px) listing every menu group as a labelled section with all its items, and the content in an inset main panel with the topbar (restyle 01, 2026-11-08; replaces the group rail + item panel).
 - **Menu data:** rendered only from the `menu` prop (`MenuGroupData[]`: key, label, icon, items). Groups and items arrive already filtered by permission and ordered server-side, and a group with no permitted items is never sent.
-- **Active group & item:**
-  - Derived from the current route: the item whose slug matches the route name prefix `{slug}.`, and that item's group.
-  - Active item gets `aria-current="page"`; active group gets `aria-current="true"` plus the highlight style.
-- **Clicking a group icon:**
-  - **Panel open:** the panel switches to that group's items without navigating.
-  - **Panel collapsed:** the panel opens as an overlay over the content, and closes on navigation, `Esc` or an outside click.
-  - **Group with one item (and Beranda):** clicking it navigates directly.
-- **Viewed group vs active group:** the viewed group (the panel's contents) may differ from the active route's group until navigation. On navigation, the panel resets to the active route's group.
-- **Collapse:** `Ctrl+B` or the `»` button collapses or expands the panel (never the rail). The state is kept in the cookie `admin_panel` and read server-side so the first paint is correct.
-- **Below 1024px:** rail and panel are hidden. The topbar hamburger opens both together in a sheet, which closes on navigation.
-- **Rail overflow:** more than 8 groups make the group list scroll vertically, while the logo and the bottom controls stay fixed.
-- **Breadcrumbs:** come from the `breadcrumbs` page prop (a Data array); there is no client-side derivation.
+- **Active item:** the item whose slug matches the route name prefix `{slug}.`; it gets `aria-current="page"`. Each group is a `role="group"` labelled with the group label.
+- **Collapse:** `Ctrl+B` or the topbar toggle collapses the sidebar to a 56px icon strip (never hides it) and expands it again. Collapsed items show their label in a tooltip and carry it as `aria-label`. The state is kept in the cookie `admin_panel` and read server-side (`app.panel_open`) so the first paint is correct.
+- **Long menus:** the sections scroll vertically; the app mark and the user block stay fixed.
+- **Below 1024px:** the sidebar is hidden. The topbar menu button opens it (expanded, 44px items) in a sheet, which closes on navigation.
+- **Search:** the topbar search field and `Ctrl+K` open the command palette.
+- **Breadcrumbs:** come from the `breadcrumbs` page prop (a Data array) and render in `PageHeader` above the title (≥1024px); there is no client-side derivation.
 - **Downloads badge:** shows `downloads.ready_count`. It refreshes on each Inertia visit and every 30s with a partial reload of `downloads` only while the tab is visible.
 - **Site access banner:** shown when `app.site_access` is non-null (Akses Situs mode isn't `open`): the mode and its message, with a link to Settings → Akses Situs for Super Admin.
 

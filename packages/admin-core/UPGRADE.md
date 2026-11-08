@@ -16,6 +16,14 @@ Run in the project root:
 
 Version-specific steps are listed below, newest first.
 
+## 2.0.0
+
+The admin shell and theme change (restyle 01, see CHANGELOG). No PHP or Data changes.
+
+1. A project that imported `AppRail` or `ItemPanel`, or used the `bg-rail`, `text-rail-foreground`, `bg-sidebar-active`, `text-sidebar-active-foreground`, `w-rail` or `w-panel` utilities: use `AppSidebar` and `bg-sidebar-primary` / `bg-sidebar-accent` instead (`npm run typecheck` and `npm run build` name every place).
+2. A project page that showed breadcrumbs itself: `PageHeader` now renders them.
+3. Branding still overrides `--highlight` only; it now colours chart series 1, not the active menu item.
+
 ## 1.0.0
 
 First release. Nothing to do.

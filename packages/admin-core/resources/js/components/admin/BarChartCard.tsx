@@ -57,12 +57,12 @@ export function BarChartCard({
         <section
             aria-label={title}
             aria-busy={loading || undefined}
-            className="flex min-w-0 flex-col gap-3 rounded bg-card p-6 text-card-foreground"
+            className="flex min-w-0 flex-col gap-3 rounded-xl border border-border bg-card p-6 text-card-foreground"
         >
-            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 border-b-2 border-rule pb-3">
+            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
                 <h2 className="flex-1 text-card-title">{title}</h2>
                 {subtitle && (
-                    <span className="text-table text-muted-foreground tabular-nums">
+                    <span className="text-table text-muted-foreground tabular-nums [&>a]:text-foreground">
                         {subtitle}
                     </span>
                 )}
@@ -115,15 +115,15 @@ export function BarChartCard({
                         >
                             <CartesianGrid
                                 vertical={false}
-                                strokeDasharray="1 3"
                                 className="stroke-border"
                             />
                             <XAxis
                                 dataKey="x"
                                 tickLine={false}
+                                axisLine={false}
                                 interval={every - 1}
                                 tickFormatter={xFormat}
-                                className="text-xs [&_line]:stroke-foreground [&_text]:fill-muted-foreground"
+                                className="text-xs [&_text]:fill-muted-foreground"
                             />
                             <YAxis
                                 width={36}
@@ -149,7 +149,7 @@ export function BarChartCard({
                                     const tip = tooltip(point.x, point.y);
 
                                     return (
-                                        <div className="flex flex-col gap-0.5 rounded border border-border bg-popover px-3 py-2 text-popover-foreground shadow-popover">
+                                        <div className="flex flex-col gap-0.5 rounded-lg border border-border bg-popover px-3 py-2 text-popover-foreground shadow-popover">
                                             <strong className="text-body font-semibold tabular-nums">
                                                 {tip.title}
                                             </strong>
@@ -162,8 +162,8 @@ export function BarChartCard({
                             />
                             <Bar
                                 dataKey="y"
-                                radius={[2, 2, 0, 0]}
-                                maxBarSize={28}
+                                radius={[6, 6, 6, 6]}
+                                maxBarSize={14}
                                 isAnimationActive={!reduced}
                                 className={
                                     onSelect ? 'cursor-pointer' : undefined

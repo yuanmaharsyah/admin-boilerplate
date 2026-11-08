@@ -12,56 +12,57 @@ type Props = {
     format?: 'number' | 'currency';
     /** A StatusBadge next to the value, e.g. "Perlu dicek". */
     badge?: ReactNode;
+    /** Below the value, e.g. the widget's "Lihat semua →" button. */
+    action?: ReactNode;
     loading?: boolean;
 };
 
-/** One KPI card of a summary (reference `audit`): icon, label, big number. */
+/** One KPI card: title with a round icon on the right, the big number, an optional action. */
 export function StatTile({
     icon: Icon,
     label,
     value,
     format = 'number',
     badge,
+    action,
     loading = false,
 }: Props) {
     return (
         <section
             aria-label={label}
             aria-busy={loading || undefined}
-            className="flex min-w-0 flex-col rounded bg-card p-6 text-card-foreground"
+            className="flex min-w-0 flex-col gap-4 rounded-xl border border-border bg-card p-6 text-card-foreground"
         >
-            {loading ? (
-                <>
-                    <Skeleton className="size-5" />
-                    <div className="h-7" />
-                    <Skeleton className="h-3 w-28" />
-                    <Skeleton className="mt-2.5 h-5.5 w-20" />
-                </>
-            ) : (
-                <>
-                    {typeof Icon === 'string' ? (
-                        <NamedIcon
-                            name={Icon}
-                            aria-hidden="true"
-                            className="size-5"
-                        />
+            <div className="flex items-start gap-3">
+                <div className="min-w-0 flex-1 text-card-title">
+                    {loading ? <Skeleton className="mt-1.5 h-4 w-28" /> : label}
+                </div>
+                <span
+                    aria-hidden="true"
+                    className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border"
+                >
+                    {loading ? (
+                        <Skeleton className="size-5 rounded-full" />
+                    ) : typeof Icon === 'string' ? (
+                        <NamedIcon name={Icon} className="size-5" />
                     ) : (
-                        <Icon aria-hidden="true" className="size-5" />
+                        <Icon className="size-5" />
                     )}
-                    <div className="h-7" />
-                    <div className="text-label text-muted-foreground uppercase">
-                        {label}
-                    </div>
-                    <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
-                        <span className="text-kpi tabular-nums">
-                            {format === 'currency'
-                                ? formatCurrency(value)
-                                : formatNumber(value)}
-                        </span>
-                        {badge}
-                    </div>
-                </>
+                </span>
+            </div>
+            {loading ? (
+                <Skeleton className="h-8 w-24" />
+            ) : (
+                <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+                    <span className="text-kpi tabular-nums">
+                        {format === 'currency'
+                            ? formatCurrency(value)
+                            : formatNumber(value)}
+                    </span>
+                    {badge}
+                </div>
             )}
+            {action && !loading && <div className="mt-auto">{action}</div>}
         </section>
     );
 }

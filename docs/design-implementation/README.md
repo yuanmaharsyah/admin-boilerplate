@@ -36,9 +36,9 @@ Per-screen briefs (self-contained context for the UI model, with exact sample da
 
 | File | Screen / component | Implemented in | Roadmap phase | Status |
 |---|---|---|---|---|
-| `tokens.html` | Color tokens (light/dark), type scale, spacing, radius, icons. **Source:** `reference/…/index.html` token block (ui-design §1) | `resources/css/admin-core.css` theme | 05 | ✅ approved (browser review, 2026-10-20) |
-| `shell.html` | Group rail + item panel (open / collapsed / overlay), topbar, breadcrumbs, user menu, mobile sheet, maintenance banner. **Source:** `reference/…/index.html`, `users-index.dc.html`; rail overflow derived | `AdminLayout`, `AppRail`, `ItemPanel` | 05 | ✅ approved (browser review, 2026-10-20) |
-| `command-palette.html` | Palette: sections, empty state. **Source:** `reference/…/index.html`, `users-index.dc.html` | `CommandPalette` | 05 | ✅ approved (browser review, 2026-10-20) |
+| `tokens.html` | Color tokens (light/dark), type scale, spacing, radius, icons. **Source:** `reference/…/index.html` token block (ui-design §1) | `resources/css/admin-core.css` theme | 05 | ✅ approved (browser review, 2026-11-08) |
+| `shell.html` | Group rail + item panel (open / collapsed / overlay), topbar, breadcrumbs, user menu, mobile sheet, maintenance banner. **Source:** `reference/…/index.html`, `users-index.dc.html`; rail overflow derived | `AdminLayout`, `AppRail`, `ItemPanel` | 05 | ✅ approved (browser review, 2026-11-08) |
+| `command-palette.html` | Palette: sections, empty state. **Source:** `reference/…/index.html`, `users-index.dc.html` | `CommandPalette` | 05 | ✅ approved (browser review, 2026-11-08) |
 | `error-pages.html` | 403 / 404 / 419 / 500 / 503. **Source:** derived (auth card + code in ink over the 2px rule) | `Core::Errors/Show` | 05 | ✅ approved (browser review, 2026-10-20) |
 | `auth.html` | Login, forgot, reset, change password. **Source:** `reference/…/auth.dc.html` | `Core::Auth/*`, `AuthLayout` | 05 | ✅ approved (browser review, 2026-10-20) |
 | `pattern-index.html` | Generic index: header, toolbar, table, all states, bulk bar. **Source:** `reference/…/users-index.dc.html` (`DataTable`, `DataTableToolbar`, `DataTablePagination`, `EmptyState`, `StatusBadge`); column menu contents derived | `DataTable` family, index stub | 06a | ✅ approved (browser review, 2026-10-20) |
@@ -52,7 +52,7 @@ Per-screen briefs (self-contained context for the UI model, with exact sample da
 | `levels-permission-matrix.html` | Hak Akses matrix, dirty state, save bar. **Source:** `reference/…/index.html` (`level-perm`) | `PermissionMatrix`, `Levels::Permissions` | 07a | ✅ approved (browser review, 2026-10-23) |
 | _(no file)_ | Profil (own name and email) and the mandatory change-password state. **Source:** profile derived from `pattern-form`; mandatory state from `reference/…/auth.dc.html` | `Core::Account/Profile`, `Core::Auth/ChangePassword` | 07a | ✅ approved (browser review, 2026-10-23) |
 | `audit-log.html` | Dashboard-style summary (KPI tiles, stat stack, per-type segment bar, per-day bar chart) + event list + diff drawer; **closest screen to the reference image** | `AuditLog::Index`, `StatTile`, `StatStack`, `SegmentBar`, `BarChartCard`, `FilterBar`, `DiffTable` | 07 | ✅ approved (browser review, 2026-10-24) |
-| `dashboard.html` | Beranda widget grid (all widget types, loading / failed / empty states, no-access page) in the reference layout. **Source:** `reference/…/index.html` (`beranda`); no-access page derived (error-page card) | `Dashboard::Index`, `WidgetGrid`, `WidgetTable`, `Core::Errors/NoAccess` | 07 | ✅ approved (browser review, 2026-10-24) |
+| `dashboard.html` | Beranda widget grid (all widget types, loading / failed / empty states, no-access page) in the reference layout. **Source:** `reference/…/index.html` (`beranda`); no-access page derived (error-page card) | `Dashboard::Index`, `WidgetGrid`, `WidgetTable`, `Core::Errors/NoAccess` | 07 | ✅ approved (browser review, 2026-11-08) |
 | `activity-history.html` | Riwayat tab timeline with expanded diff and batch link (shown inside `pattern-show`) | `ActivityHistory` | 07 | ✅ approved (browser review, 2026-10-24) |
 | `settings.html` | Pengaturan tabs (Umum, Kontak, Sosial Media, Akses Situs, Keamanan, Ekspor; Health is Post-v1). **Source:** derived (approved `pattern-form` inside the Show `Tabs`) | `Settings::Index`, `ImageField` | 07 | ✅ approved (browser review, 2026-10-24) |
 | _(no file)_ | Public page in maintenance / coming soon. **Source:** derived (error-page card) | `Core::Errors/SiteAccess` | 07 | ✅ approved (browser review, 2026-10-24) |
@@ -63,6 +63,8 @@ Status values: `☐ not started` · `🟡 review` · `✅ approved` · `✅ appr
 ## Changelog
 | Date | File | Change |
 |---|---|---|
+| 2026-11-08 | `tokens.html`, `shell.html`, `command-palette.html`, `dashboard.html` | Restyle 01 approved in the owner's browser review; the rendered app is the source of truth until the HTML mockups are redrawn |
+| 2026-11-08 | `tokens.html`, `shell.html`, `command-palette.html`, `dashboard.html` | Restyle 01 (`docs/plans/2026-11-08-restyle-shell-beranda.md`): shadcn neutral tokens, 8px radius, one sidebar with an icon-only collapse, inset main panel, Beranda welcome card. Visual target measured from the public shadcnspace dashboard demo (values only, no code or assets). Back to review until the owner's browser review; the HTML mockups describe the previous style until then |
 | 2026-10-24 | `audit-log.html`, `activity-history.html` | Approved in the owner's Phase 07 browser review (built from `reference/…/index.html`: `audit`, invoice detail) |
 | 2026-10-24 | `settings.html`, `dashboard.html`, no-access, maintenance / coming-soon | Approved in the owner's 07b + 07c browser review (derived: Pengaturan, no-access page, public site-access page) |
 | 2026-10-23 | Users, Levels, matrix, Profil | Approved in the owner's 07a browser review (derived: level form, reset-password and temporary-password dialogs, profile page). The no-access page is built in 07c |

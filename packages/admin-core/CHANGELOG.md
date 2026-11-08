@@ -4,6 +4,15 @@ All notable changes to `yuanmaharsyah/admin-core` are documented here. The forma
 
 ## [Unreleased]
 
+### Changed (breaking, visual)
+- Theme: the shadcn/ui neutral token values (light and dark), `--radius` 0.5rem (`rounded` 8px, `rounded-md` 6px, `rounded-xl` 12px), new `--sidebar-primary` / `--sidebar-accent` tokens; type steps `title` 24px/600, `kpi` 24px/500, `card-title` 18px/500, `label` 12px/600; `--chart-1` follows `--highlight`, `--chart-2` is ink. Reduced motion turns transitions and animations off.
+- Shell: one `AppSidebar` (every group as a labelled section) replaces the group rail and the item panel; `Ctrl+B` / the topbar toggle collapses it to a 56px icon strip with tooltips (cookie `admin_panel`, as before). The content sits in an inset panel; the topbar holds the sidebar toggle, the search field (opens the command palette), downloads, theme and the user menu.
+- `PageHeader`: the breadcrumbs move above the title (from the topbar); no 2px ink rule.
+- Beranda: welcome card header with a segmented range control; widget cards get a 1px border and 12px radius; `StatTile` shows the title with a round icon and takes an `action` (the widget's "Lihat semua →" button, which replaces the whole-card link); rounded chart bars; `StatusBadge` is a round pill.
+
+### Removed
+- `AppRail`, `ItemPanel`, the `--rail*` and `--sidebar-active*` tokens, the `w-rail` / `w-panel` sizes, `navigatesDirectly()` and the `shell.rail` / `shell.panel*` strings. `--rule` stays for the screens not restyled yet, now a plain divider colour.
+
 ## [1.0.0] - 2026-10-29
 
 ### Added

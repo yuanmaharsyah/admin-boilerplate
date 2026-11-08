@@ -52,18 +52,46 @@ it('shows the 404 page with a link home to a signed-in user', function (): void 
         ->assertNoJavaScriptErrors();
 });
 
-it('shows the clicked one-item group in the panel even when it links to the current page', function (): void {
+it('shows every group in one sidebar and marks the current page', function (): void {
     $user = User::factory()->create();
     $user->assignLevel(Level::superAdmin());
     actingAs($user);
 
     visit('/admin/invoices')
-        ->assertPresent('nav[aria-label="Menu Keuangan"]')
-        ->click('[aria-label="Master Data"]')
-        ->assertPresent('nav[aria-label="Menu Master Data"]')
-        ->click('a[aria-label="Keuangan"]')
-        ->assertPresent('nav[aria-label="Menu Keuangan"]')
-        ->assertMissing('nav[aria-label="Menu Master Data"]')
-        ->assertPathIs('/admin/invoices')
+        ->assertPresent('nav[aria-label="Navigasi"] [role="group"][aria-label="Keuangan"]')
+        ->assertPresent('nav[aria-label="Navigasi"] [role="group"][aria-label="Master Data"]')
+        ->assertPresent('nav[aria-label="Navigasi"] a[aria-current="page"][href$="/admin/invoices"]')
+        ->assertNoJavaScriptErrors();
+});
+
+it('collapses the sidebar to icons with Ctrl+B and keeps it after a reload', function (): void {
+    $user = User::factory()->create();
+    $user->assignLevel(Level::superAdmin());
+    actingAs($user);
+
+    visit('/admin/invoices')
+        ->assertMissing('nav[aria-label="Navigasi"][data-collapsed]')
+        ->keys('[aria-label="Ciutkan sidebar (Ctrl+B)"]', 'Control+b')
+        ->assertPresent('nav[aria-label="Navigasi"][data-collapsed]')
+        ->assertPresent('nav[aria-label="Navigasi"] a[aria-label][aria-current="page"]')
+        ->refresh()
+        ->assertPresent('nav[aria-label="Navigasi"][data-collapsed]')
+        ->click('[aria-label="Buka sidebar (Ctrl+B)"]')
+        ->assertMissing('nav[aria-label="Navigasi"][data-collapsed]')
+        ->assertNoJavaScriptErrors();
+});
+
+it('opens the sidebar in a sheet on a phone and the palette from the search field', function (): void {
+    $user = User::factory()->create();
+    $user->assignLevel(Level::superAdmin());
+    actingAs($user);
+
+    visit('/admin/invoices')
+        ->click('button:has-text("Cari…")')
+        ->assertPresent('[role="dialog"]')
+        ->keys('[role="dialog"]', 'Escape')
+        ->resize(375, 800)
+        ->click('[aria-label="Buka menu"]')
+        ->assertPresent('[role="dialog"] nav[aria-label="Navigasi"]')
         ->assertNoJavaScriptErrors();
 });

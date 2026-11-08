@@ -122,7 +122,7 @@ If not: "Username atau kata sandi salah." means a copy mistake (the password oft
 
 ### f. Give the app its name and logo
 
-Open **Pengaturan**: the gear icon on the left rail opens the **Sistem** group. On the **Umum** tab, fill **Nama aplikasi**, upload **Logo 1:1** (a square PNG, JPG or WebP, at least 128 px), then choose **Simpan**.
+Open **Pengaturan**: it's in the **Sistem** section of the sidebar. On the **Umum** tab, fill **Nama aplikasi**, upload **Logo 1:1** (a square PNG, JPG or WebP, at least 128 px), then choose **Simpan**.
 
 You should see: "Pengaturan disimpan.", and your name and logo at the top of the menu and on the sign-in page.
 
@@ -137,7 +137,7 @@ php artisan make:module Kendaraan --fields="plat_nomor:string,merk:string,tahun:
 php artisan migrate
 ```
 
-You should see: `Module Kendaraan written to modules/Kendaraan`, then the migration `create_kendaraans_table … DONE`. Reload the browser: **Kendaraan** appears in the **Master Data** group (the database icon on the rail). Open it, choose **Tambah**, fill the form, attach a PDF or JPG and choose **Simpan**: you land on the new record, with the file under **Lampiran**.
+You should see: `Module Kendaraan written to modules/Kendaraan`, then the migration `create_kendaraans_table … DONE`. Reload the browser: **Kendaraan** appears in the **Master Data** group (in the sidebar). Open it, choose **Tambah**, fill the form, attach a PDF or JPG and choose **Simpan**: you land on the new record, with the file under **Lampiran**.
 
 If not: the menu doesn't show the new module until the browser reloads; a "Page not found Kendaraan::Index" means Vite wasn't running (start `composer dev`, or run `npm run build` once).
 
